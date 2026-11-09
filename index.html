@@ -54,7 +54,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--indigo);outline-
 
 /* ===== 札 ===== */
 .fuda{
-  aspect-ratio:3/4;background:var(--card);border:2px solid #8b6b43;border-radius:8px;position:relative;
+  aspect-ratio:63/88;background:var(--card);border:2px solid #8b6b43;border-radius:8px;position:relative;
   box-shadow:inset 0 0 0 4px var(--card),inset 0 0 0 5px #c9a978, 0 3px 6px rgba(60,40,10,.18);
   user-select:none;-webkit-user-select:none;overflow:hidden;
 }
@@ -124,7 +124,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--indigo);outline-
 .dialog.frame-dlg{max-width:620px;padding:18px}
 .dialog.frame-dlg h3{font-size:20px;margin-bottom:4px}
 .frame-wrap{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;margin-top:10px;text-align:left}
-.frame-stage{position:relative;width:min(270px,62vw);aspect-ratio:3/4;border:2px solid #8b6b43;border-radius:10px;background:#fffaf0;
+.frame-stage{position:relative;width:min(270px,62vw);aspect-ratio:63/88;border:2px solid #8b6b43;border-radius:10px;background:#fffaf0;
   box-shadow:inset 0 0 0 4px #fffaf0,inset 0 0 0 5px #c9a978,0 4px 12px rgba(0,0,0,.18);overflow:hidden;touch-action:none;cursor:grab}
 .frame-stage:active{cursor:grabbing}
 .frame-stage canvas{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);border-radius:4px;mix-blend-mode:multiply}
@@ -149,7 +149,7 @@ html.hp-b .fuda .head{order:3}
 html.hp-b .fuda-in.full .head{margin-top:auto}
 .set-grid{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start}
 .set-prev{display:flex;gap:10px}
-.set-prev .fuda{--w:110px;width:110px}
+.set-prev .fuda{--w:calc(110px * min(var(--cs,1),1.3));width:calc(110px * min(var(--cs,1),1.3))}
 .pos-grid{grid-template-columns:repeat(3,44px)}
 .pos-grid button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 #btn-settings{background:var(--paper2)}
@@ -159,9 +159,9 @@ html.hp-b .fuda-in.full .head{margin-top:auto}
 .preview-wrap{text-align:center}
 .preview-wrap .fuda{--w:180px;width:180px;margin:0 auto}
 .deck-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin:26px 0 12px}
-.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(150px * var(--cs,1)),1fr));gap:14px}
 .deck-item{background:rgba(255,250,240,.7);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
-.deck-item .fuda{--w:110px;width:110px;margin:0 auto}
+.deck-item .fuda{--w:calc(110px * var(--cs,1));width:calc(110px * var(--cs,1));margin:0 auto}
 .deck-item p{margin:0;font-size:13px;line-height:1.5;min-height:3em}
 .deck-item .acts{display:flex;gap:6px;justify-content:center}
 .deck-item.editing{outline:3px solid var(--indigo)}
@@ -188,6 +188,11 @@ details.tools summary{cursor:pointer;font-weight:700;color:var(--sub);padding:6p
 .remain{display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:12px;color:var(--sub);padding:0 6px}
 .remain b{font-size:22px;color:var(--ink)}
 
+/* 対戦中、読み札と案内は画面上部に固定 */
+.game-top{position:sticky;top:var(--hdr-h,70px);z-index:4;background:var(--paper);margin:0 -20px;padding:8px 20px 2px;transition:box-shadow .2s}
+.game-top.stuck{box-shadow:0 6px 12px -6px rgba(60,40,10,.25)}
+.game-top .reader{margin-bottom:6px}
+@media (max-width:720px){header{position:static}.game-top{margin:0 -12px;padding:6px 12px 2px}.game-top .reader{min-height:60px;padding:10px 14px}}
 .reader{
   background:#2b2118;color:#fff6e0;border-radius:14px;padding:14px 18px;margin-bottom:12px;
   display:flex;align-items:center;gap:14px;min-height:76px;position:relative;
@@ -233,10 +238,10 @@ details.tools summary{cursor:pointer;font-weight:700;color:var(--sub);padding:6p
 .res-name{font-weight:900;font-size:16px;margin-bottom:8px}
 .res-name b{font-size:28px;margin:0 2px;font-variant-numeric:tabular-nums}
 .res-col.you .res-name b{color:var(--red)} .res-col.cpu .res-name b{color:var(--indigo)}
-.res-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(50px,1fr));gap:6px;align-content:start;flex:1;perspective:600px}
+.res-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(50px * var(--cs,1)),1fr));gap:6px;align-content:start;flex:1;perspective:600px}
 .res-cards .fuda{--w:50px;box-shadow:inset 0 0 0 3px var(--card),inset 0 0 0 4px #c9a978,0 2px 4px rgba(0,0,0,.2);animation:flipin .32s ease-out both}
 .res-cards .fuda .ftext{display:none}
-.res-cards .fuda{--w:50px}
+.res-cards .fuda{--w:calc(50px * var(--cs,1))}
 .res-pen.none{color:var(--sub)}
 .res-cards .fuda .fuda-in{inset:4px}
 @keyframes flipin{0%{transform:rotateY(90deg) translateY(-14px);opacity:0}100%{transform:none;opacity:1}}
@@ -485,8 +490,10 @@ details.tools summary{cursor:pointer;font-weight:700;color:var(--sub);padding:6p
       <div class="remain">のこり<b id="remain">0</b>枚</div>
       <div class="player cpu"><div><div class="name">CPU</div><div class="detail" id="cpu-detail"></div></div><div class="pts" id="cpu-pts">0</div></div>
     </div>
+    <div class="game-top" id="game-top">
     <div class="reader"><span class="no" id="read-no"></span><div style="flex:1"><div class="text" id="read-text"></div><span class="yomi" id="read-yomi"></span></div></div>
     <div class="msg" id="msg"></div>
+    </div>
     <div class="field" id="field"></div>
     <div class="game-foot">
       <p class="hint">CPUの強さ：<b id="lv-name"></b></p>
@@ -522,6 +529,15 @@ details.tools summary{cursor:pointer;font-weight:700;color:var(--sub);padding:6p
     <h3 style="font-size:22px;text-align:center">基本設定</h3>
     <div class="set-grid">
       <div>
+        <label class="f">札の大きさ（画面） <b id="set-cs-v" style="font-weight:700;color:var(--ink)"></b></label>
+        <div class="fr-zoom"><span>小</span><input type="range" id="set-cs" min="60" max="180" step="5" value="100"><span>大</span></div>
+        <p class="hint" style="margin:2px 0 0">札の一覧・対戦の場・集計の札の大きさです。</p>
+        <label class="f" for="set-ps">印刷する札の大きさ（PDF）</label>
+        <select id="set-ps">
+          <option value="tcg">トレカ標準 63×88mm（1ページ9枚）</option>
+          <option value="small">トレカ小さめ 59×86mm（1ページ9枚）</option>
+          <option value="big">大きめ 88×123mm（1ページ4枚）</option>
+        </select>
         <label class="f">丸囲み文字の大きさ</label>
         <div class="fr-zoom"><span>小</span><input type="range" id="set-hs" min="22" max="66" step="1" value="42"><span>大</span></div>
         <label class="f">丸囲み文字の位置</label>
@@ -542,7 +558,7 @@ details.tools summary{cursor:pointer;font-weight:700;color:var(--sub);padding:6p
     <h3>絵の位置と大きさ</h3>
     <p class="hint" style="margin:0">絵をドラッグして動かせます。大きさはつまみ・マウスホイール・2本指で変えられます。</p>
     <div class="frame-wrap">
-      <div class="frame-stage" id="fr-stage"><canvas id="fr-cv" width="360" height="480"></canvas><span class="fr-head" id="fr-head">あ</span></div>
+      <div class="frame-stage" id="fr-stage"><canvas id="fr-cv" width="378" height="528"></canvas><span class="fr-head" id="fr-head">あ</span></div>
       <div class="fr-side">
         <div class="lbl">大きさ</div>
         <div class="fr-zoom"><span>小</span><input type="range" id="fr-zoom" min="0" max="1000" value="500"><span>大</span></div>
@@ -819,13 +835,15 @@ const readKey = c => c.read.replace(/[\s　、。,.!！?？・「」『』]/g, '
 
 /* ---- 基本設定（丸囲み文字の大きさ・位置）---- */
 const LOOK_KEY = 'magna-carta-look';
-const look = (() => { try { return Object.assign({ hs: 42, pos: 'tl' }, JSON.parse(localStorage.getItem(LOOK_KEY) || '{}')); } catch (e) { return { hs: 42, pos: 'tl' }; } })();
+const look = (() => { try { return Object.assign({ hs: 42, pos: 'tl', cs: 100, ps: 'tcg' }, JSON.parse(localStorage.getItem(LOOK_KEY) || '{}')); } catch (e) { return { hs: 42, pos: 'tl' }; } })();
 function applyLook() {
   const h = document.documentElement;
   h.style.setProperty('--hs', look.hs);
+  h.style.setProperty('--cs', (look.cs || 100) / 100);
   h.classList.remove('hp-l', 'hp-c', 'hp-r', 'hp-t', 'hp-b');
   h.classList.add(look.pos[0] === 'b' ? 'hp-b' : 'hp-t', look.pos[1] === 'r' ? 'hp-r' : look.pos[1] === 'c' ? 'hp-c' : 'hp-l');
 }
+if (!['tcg', 'small', 'big'].includes(look.ps)) look.ps = 'tcg';
 applyLook();
 function fudaHTML(c) {
   const txt = c.notext ? '' : esc(c.text || c.read);
@@ -843,7 +861,7 @@ function ask(text, onYes) {
 }
 
 /* ---- 絵をカードいっぱいに：位置と大きさ（フレーム）で 3:4 に切り出す ---- */
-const FW = 540, FH = 720;   // 仕上がりの大きさ（3:4）
+const FW = 567, FH = 792;   // 仕上がりの大きさ（トレカ 63:88）
 function loadImage(src) { return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = src; }); }
 const anaCache = new Map();
 const srcKey = src => src.length + ':' + src.slice(-64);
@@ -919,7 +937,7 @@ async function fileToImageURL(file) {
 }
 
 function renderSettings() {
-  $('#set-hs').value = look.hs;
+  $('#set-hs').value = look.hs; $('#set-cs').value = look.cs; $('#set-cs-v').textContent = look.cs + '%'; $('#set-ps').value = look.ps;
   document.querySelectorAll('#set-pos button').forEach(b => b.classList.toggle('on', b.dataset.p === look.pos));
   const sample = { head: 'あ', emoji: '🌸', read: 'あさおきて　まどをあければ　あおいそら' };
   const full = (typeof deck !== 'undefined' && deck.find(c => c.full && c.img)) || (typeof ALL !== 'undefined' && ALL.decks.flatMap(d => d.cards).find(c => c.full && c.img));
@@ -930,8 +948,10 @@ function saveLook() { try { localStorage.setItem(LOOK_KEY, JSON.stringify(look))
 $('#btn-settings').addEventListener('click', () => { renderSettings(); $('#ov-set').hidden = false; });
 $('#set-close').addEventListener('click', () => { $('#ov-set').hidden = true; if (typeof updatePdfPreview === 'function' && !$('#ov-pdf').hidden) updatePdfPreview(); });
 $('#set-hs').addEventListener('input', e => { look.hs = +e.target.value; saveLook(); });
+$('#set-cs').addEventListener('input', e => { look.cs = +e.target.value; saveLook(); });
+$('#set-ps').addEventListener('change', e => { look.ps = e.target.value; saveLook(); });
 $('#set-pos').addEventListener('click', e => { const b = e.target.closest('button[data-p]'); if (b) { look.pos = b.dataset.p; saveLook(); } });
-$('#set-reset').addEventListener('click', () => { look.hs = 42; look.pos = 'tl'; saveLook(); });
+$('#set-reset').addEventListener('click', () => { look.hs = 42; look.pos = 'tl'; look.cs = 100; look.ps = 'tcg'; saveLook(); });
 
 /* ================= 札を作るモード ================= */
 let editingId = null;
@@ -1243,14 +1263,19 @@ $('#btn-rec').addEventListener('click', async () => {
 });
 
 /* ================= PDF ================= */
-const A4W = 210, A4H = 297, CW = 58, CH = 80, GAP = 6, COLS = 3, ROWS = 3, PER = COLS * ROWS;
-const GX = (A4W - (COLS * CW + (COLS - 1) * GAP)) / 2, GY = 24;
+const A4W = 210, A4H = 297, GAP = 3;
+const PSIZES = { tcg: [63, 88, 3, 3], small: [59, 86, 3, 3], big: [88, 123, 2, 2] };
+function grid() {
+  const [CW, CH, COLS, ROWS] = PSIZES[look.ps] || PSIZES.tcg;
+  return { CW, CH, COLS, ROWS, PER: COLS * ROWS, GX: (A4W - (COLS * CW + (COLS - 1) * GAP)) / 2, GY: Math.max(13, (A4H - (ROWS * CH + (ROWS - 1) * GAP)) / 2) };
+}
 const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
 const SERIF = '"Kaisei Decol","Hiragino Mincho ProN","Yu Mincho",serif';
 const ROUND = '"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif';
 function pdfPages(d, o) {
   const pages = [];
   if (o.cover) pages.push({ kind: 'cover' });
+  const { PER } = grid();
   const chunk = kind => { for (let i = 0; i < d.cards.length; i += PER) pages.push({ kind, cards: d.cards.slice(i, i + PER), no: i / PER + 1, of: Math.ceil(d.cards.length / PER) }); };
   if (o.tori) chunk('tori');
   if (o.yomi) chunk('yomi');
@@ -1278,6 +1303,7 @@ function cardFrame(ctx, k, x, y, w, h, cut) {
 }
 function drawTori(ctx, k, c, x, y, w, h, imgs, cut) {
   cardFrame(ctx, k, x, y, w, h, cut);
+  const u = w / 58; // 札の大きさに合わせて文字も拡大
   const R = (w - 8) * look.hs / 200, hb = look.pos[0] === 'b';
   const cx = look.pos[1] === 'r' ? x + w - 4 - R : look.pos[1] === 'c' ? x + w / 2 : x + 4 + R;
   const cy = hb ? y + h - 4 - R : y + 4 + R;
@@ -1299,7 +1325,7 @@ function drawTori(ctx, k, c, x, y, w, h, imgs, cut) {
   ctx.lineWidth = .6 * k; ctx.strokeStyle = '#b8322a'; ctx.stroke();
   ctx.fillStyle = '#b8322a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.font = `700 ${R * 1.25 * k}px ${SERIF}`; ctx.fillText(c.head, cx * k, (cy + R * .05) * k);
-  const textH = c.notext ? 0 : 13, foot = hb ? 2 * R + 3 : 0;
+  const textH = c.notext ? 0 : 13 * u, foot = hb ? 2 * R + 3 : 0;
   const top = hb ? y + 4 : y + 4 + 2 * R + 2, bottom = y + h - 3 - textH - foot, boxW = w - 10, boxH = bottom - top;
   const im = c.img && imgs.get(c.img);
   if (im) {
@@ -1311,10 +1337,10 @@ function drawTori(ctx, k, c, x, y, w, h, imgs, cut) {
     ctx.fillText(c.emoji, (x + w / 2) * k, (top + boxH / 2) * k);
   }
   if (c.notext) return;
-  ctx.font = `500 ${3.1 * k}px ${ROUND}`; ctx.fillStyle = '#6d5c4a';
-  const lines = wrapLines(ctx, c.text || c.read, (w - 8) * k, 3);
-  const ly = y + h - 3.5 - foot - textH + (textH - lines.length * 4.2) / 2 + 2.1;
-  lines.forEach((l, i) => ctx.fillText(l, (x + w / 2) * k, (ly + i * 4.2) * k));
+  ctx.font = `500 ${3.1 * u * k}px ${ROUND}`; ctx.fillStyle = '#6d5c4a';
+  const lines = wrapLines(ctx, c.text || c.read, (w - 8) * k, 3), lh = 4.2 * u;
+  const ly = y + h - 3.5 - foot - textH + (textH - lines.length * lh) / 2 + lh / 2;
+  lines.forEach((l, i) => ctx.fillText(l, (x + w / 2) * k, (ly + i * lh) * k));
 }
 const ROT = new Set([...'ー－―‐〜～…‥-─—「」『』（）()【】［］〔〕＜＞<>＝=']);
 const SMALL = new Set([...'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ']);
@@ -1323,9 +1349,10 @@ const NOHEAD = new Set([...'、。，．,.）」』】〕］ーっゃゅょぁ�
 function drawYomi(ctx, k, c, deckName, x, y, w, h, cut) {
   cardFrame(ctx, k, x, y, w, h, cut);
   const segs = c.read.split(/[\s　]+/).filter(Boolean);
-  const availH = h - 16, availW = w - 10;
+  const u = w / 58;
+  const availH = h - 16 * u, availW = w - 10 * u;
   const longest = Math.max(...segs.map(sg => [...sg].length), 1);
-  let fs = Math.max(4.2, Math.min(7, availH / (longest * 1.08))), cols = [];
+  let fs = Math.max(4.2 * u, Math.min(7 * u, availH / (longest * 1.08))), cols = [];
   for (; fs >= 3; fs -= .25) {
     const per = Math.max(1, Math.floor(availH / (fs * 1.08)));
     cols = []; segs.forEach(sg => {
@@ -1344,7 +1371,7 @@ function drawYomi(ctx, k, c, deckName, x, y, w, h, cut) {
   let first = true;
   cols.forEach(col => {
     col.forEach((ch, i) => {
-      const cy = y + 7 + fs / 2 + i * fs * 1.08;
+      const cy = y + 7 * u + fs / 2 + i * fs * 1.08;
       ctx.fillStyle = first ? '#b8322a' : '#2b2118'; first = false;
       if (ROT.has(ch)) { ctx.save(); ctx.translate(colX * k, cy * k); ctx.rotate(Math.PI / 2); ctx.fillText(ch, 0, 0); ctx.restore(); }
       else if (PUNC.has(ch)) ctx.fillText(ch, (colX + fs * .55) * k, (cy - fs * .5) * k);
@@ -1353,7 +1380,7 @@ function drawYomi(ctx, k, c, deckName, x, y, w, h, cut) {
     });
     colX -= colW;
   });
-  ctx.font = `500 ${2.4 * k}px ${ROUND}`; ctx.fillStyle = '#a08f7a';
+  ctx.font = `500 ${2.4 * u * k}px ${ROUND}`; ctx.fillStyle = '#a08f7a';
   ctx.fillText(deckName.length > 22 ? deckName.slice(0, 21) + '…' : deckName, (x + w / 2) * k, (y + h - 4.5) * k);
 }
 function drawCover(ctx, k, d, o) {
@@ -1392,7 +1419,8 @@ function renderPage(ctx, k, pg, d, o, imgs) {
   ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, A4W * k, A4H * k);
   if (pg.kind === 'cover') return drawCover(ctx, k, d, o);
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; ctx.fillStyle = '#8a7a66'; ctx.font = `500 ${3.4 * k}px ${ROUND}`;
-  ctx.fillText(`${d.name}　${pg.kind === 'tori' ? '取り札' : '読み札'}（${pg.no}/${pg.of}）`, GX * k, 15 * k);
+  const { CW, CH, COLS, GX, GY } = grid();
+  ctx.fillText(`${d.name}　${pg.kind === 'tori' ? '取り札' : '読み札'}（${pg.no}/${pg.of}）`, GX * k, (GY - 4.5) * k);
   pg.cards.forEach((c, i) => {
     const col = i % COLS, row = Math.floor(i / COLS);
     const x = GX + col * (CW + GAP), y = GY + row * (CH + GAP);
@@ -1412,7 +1440,7 @@ const pdfOpts = () => ({ tori: $('#p-tori').checked, yomi: $('#p-yomi').checked,
 async function updatePdfPreview() {
   const d = cur(), o = pdfOpts(), pages = pdfPages(d, o);
   const tc = pages.filter(p => p.kind === 'tori').length, yc = pages.filter(p => p.kind === 'yomi').length;
-  $('#pdf-info').textContent = pages.length ? `A4・全${pages.length}ページ（${[o.cover ? '表紙1' : '', tc ? '取り札' + tc : '', yc ? '読み札' + yc : ''].filter(Boolean).join('・')}）　1ページに${PER}枚、札の大きさは${CW}×${CH}mmです。` : '入れるものを選んでください';
+  $('#pdf-info').textContent = pages.length ? `A4・全${pages.length}ページ（${[o.cover ? '表紙1' : '', tc ? '取り札' + tc : '', yc ? '読み札' + yc : ''].filter(Boolean).join('・')}）　1ページに${grid().PER}枚、札の大きさは${grid().CW}×${grid().CH}mmです（基本設定で変えられます）。` : '入れるものを選んでください';
   $('#pdf-go').disabled = !pages.length;
   const cv = $('#pdf-prev'), ctx = cv.getContext('2d'), k = cv.width / A4W;
   ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height);
@@ -1960,7 +1988,7 @@ function startGame() {
     level: LEVELS[$('#s-level').value], speed: SPEEDS[$('#s-speed').value], voice: $('#s-voice').checked,
   };
   const cw = n <= 8 ? 120 : n <= 16 ? 100 : n <= 30 ? 86 : 72;
-  const f = $('#field'); f.style.setProperty('--cw', cw + 'px');
+  const f = $('#field'); f.style.setProperty('--cw', Math.round(cw * (look.cs || 100) / 100) + 'px');
   f.classList.remove('locked');
   f.innerHTML = shuffle(field.slice()).map(i => `<div class="fuda" data-id="${i}" style="--rot:${(Math.random() * 6 - 3).toFixed(1)}deg;transform:rotate(var(--rot))">${fudaHTML(inst[i].card)}</div>`).join('');
   $('#lv-name').textContent = G.level.name + (G.nabe ? '　🍲 闇鍋' : '');
@@ -2146,6 +2174,16 @@ $('#btn-start').addEventListener('click', startGame);
 $('#btn-quit').addEventListener('click', () => ask('ゲームをやめて設定にもどりますか？', quitGame));
 $('#res-again').addEventListener('click', startGame);
 $('#res-setup').addEventListener('click', quitGame);
+
+/* 固定表示：ヘッダーの高さに合わせる */
+(() => {
+  const hdr = document.querySelector('header'), top = $('#game-top');
+  const hh = () => getComputedStyle(hdr).position === 'sticky' ? hdr.getBoundingClientRect().height : 0;
+  const fit = () => document.documentElement.style.setProperty('--hdr-h', hh() + 'px');
+  fit(); window.addEventListener('resize', fit);
+  try { new ResizeObserver(fit).observe(hdr); } catch (e) {}
+  window.addEventListener('scroll', () => { const r = top.getBoundingClientRect(); top.classList.toggle('stuck', r.top <= hh() + 1 && window.scrollY > 0); }, { passive: true });
+})();
 
 /* ================= 画面切り替え ================= */
 function route() {
