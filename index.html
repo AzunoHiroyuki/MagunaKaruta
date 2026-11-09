@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>混具なカルタ -Magna Carta-</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f3ead6; --paper2:#ebdfc4; --card:#fffaf0; --ink:#2b2118; --sub:#6d5c4a;
+  --red:#b8322a; --red2:#e9c9c3; --indigo:#2c3e6b; --indigo2:#cfd6e8; --green:#3e7a4a;
+  --line:#d6c7a6; --shadow:0 2px 0 #cbb88f, 0 6px 14px rgba(60,40,10,.12);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:"Zen Maru Gothic",system-ui,sans-serif; color:var(--ink);
+  background:var(--paper);
+  background-image:radial-gradient(rgba(120,90,40,.06) 1px,transparent 1px);
+  background-size:6px 6px; min-height:100vh;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:14px 20px;border-bottom:3px double var(--line);background:rgba(255,250,240,.6);
+  position:sticky;top:0;z-index:5;backdrop-filter:blur(4px);
+}
+h1{margin:0;font-family:"Kaisei Decol",serif;font-size:24px;letter-spacing:.08em}
+h1 .sub{font-family:"Zen Maru Gothic",sans-serif;font-size:13px;letter-spacing:.12em;color:var(--sub);margin-left:10px;font-weight:700}
+h1 .mark{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--red);color:#fff;margin-right:8px;font-size:20px;vertical-align:middle}
+nav{display:flex;gap:6px;background:var(--paper2);padding:4px;border-radius:999px}
+nav a{padding:8px 18px;border-radius:999px;text-decoration:none;color:var(--sub);font-weight:700}
+nav a.on{background:var(--ink);color:#fff}
+main{max-width:1100px;margin:0 auto;padding:20px}
+[hidden]{display:none!important}
+h2{font-size:18px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+h2 small{font-weight:500;color:var(--sub);font-size:13px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.btn{border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;background:var(--paper2);transition:transform .08s,filter .15s}
+.btn:hover{filter:brightness(.96)} .btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--red);color:#fff}
+.btn.indigo{background:var(--indigo);color:#fff}
+.btn.ghost{background:transparent;border:1px solid var(--line)}
+.btn.small{padding:6px 10px;font-size:13px;border-radius:8px}
+.btn.big{padding:14px 28px;font-size:18px;border-radius:14px}
+label.f{display:block;font-size:13px;font-weight:700;color:var(--sub);margin:12px 0 4px}
+label.f:first-child{margin-top:0}
+input[type=text],textarea,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+textarea{resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--indigo);outline-offset:1px}
+.hint{font-size:12px;color:var(--sub);margin-top:4px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* ===== 札 ===== */
+.fuda{
+  aspect-ratio:3/4;background:var(--card);border:2px solid #8b6b43;border-radius:8px;position:relative;
+  box-shadow:inset 0 0 0 4px var(--card),inset 0 0 0 5px #c9a978, 0 3px 6px rgba(60,40,10,.18);
+  user-select:none;-webkit-user-select:none;overflow:hidden;
+}
+.fuda-in{position:absolute;inset:7px;display:flex;flex-direction:column;align-items:center}
+.fuda .head{
+  align-self:flex-start;display:grid;place-items:center;width:42%;aspect-ratio:1;border-radius:50%;
+  border:2px solid var(--red);color:var(--red);font-family:"Kaisei Decol",serif;font-size:clamp(16px,calc(var(--w,100px)*.26),56px);line-height:1;background:#fff;
+}
+.fuda .pic{flex:1;min-height:0;width:100%;display:grid;place-items:center;font-size:clamp(18px,calc(var(--w,100px)*.36),80px);line-height:1}
+.fuda .ftext{font-size:clamp(8px,calc(var(--w,100px)*.085),15px);line-height:1.35;text-align:center;color:var(--sub);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;width:100%}
+
+.fuda .pic img{max-width:100%;max-height:100%;object-fit:contain;border-radius:4px;display:block;-webkit-user-drag:none;pointer-events:none;mix-blend-mode:multiply}
+/* ===== 絵を描く ===== */
+.dialog.draw{max-width:520px;padding:18px}
+.dialog.draw h3{font-size:20px;margin-bottom:10px}
+#cv{width:100%;max-width:420px;aspect-ratio:1;display:block;margin:0 auto;background:#fff;border:2px solid #8b6b43;border-radius:8px;touch-action:none;cursor:crosshair}
+.palette{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0 8px}
+.palette button{width:30px;height:30px;border-radius:50%;border:2px solid rgba(0,0,0,.15);cursor:pointer;padding:0}
+.palette button.on{outline:3px solid var(--ink);outline-offset:2px}
+.palette input[type=color]{width:34px;height:34px;border:none;padding:0;background:none;cursor:pointer}
+.draw-tools{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.draw-tools .on{background:var(--ink);color:#fff}
+.img-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px}
+.file-btn{position:relative;overflow:hidden;display:inline-block}
+.file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+/* ===== デッキ ===== */
+.deckbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;padding:10px 14px;background:var(--ink);color:#fff;border-radius:14px}
+.deckbar label{font-weight:900;letter-spacing:.1em}
+.deckbar select{width:auto;min-width:180px;max-width:100%;padding:8px 10px}
+.deckbar .hint{color:#e8dcc4;margin:0;flex:1;min-width:120px}
+.deckbar .btn{background:#4a3c2e;color:#fff}
+.deckbar .btn.ghost{background:transparent;border-color:#6d5c4a}
+.share-steps p{margin:6px 0;font-size:13px;line-height:1.6}
+.share-steps .row{margin-bottom:8px}
+.deck-pick{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow:auto;padding:2px}
+.deck-pick label{display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;font-size:14px}
+.deck-pick label.on{border-color:var(--red);background:#fff4f2}
+.deck-pick input{width:18px;height:18px;accent-color:var(--red);flex:none}
+.deck-pick .nm{font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.deck-pick .ct{color:var(--sub);font-size:12px;white-space:nowrap}
+.nabe{margin-top:10px;padding:10px 14px;border-radius:10px;background:#2b2118;color:#fff6e0;font-size:13px;line-height:1.6}
+.nabe b{font-size:15px}
+.src{font-size:12px;font-weight:500;color:var(--sub);display:block;margin-top:2px}
+.pdf-grid{display:grid;grid-template-columns:1fr 190px;gap:16px;align-items:start}
+.pdf-grid .check{margin-top:10px}
+#pdf-prev{width:190px;height:auto;aspect-ratio:210/297;display:block;background:#fff;border:1px solid var(--line);box-shadow:0 3px 8px rgba(0,0,0,.12)}
+.progress{height:8px;border-radius:99px;background:var(--paper2);overflow:hidden;margin-top:10px}
+.progress i{display:block;height:100%;width:0;background:var(--red);transition:width .2s}
+@media (max-width:560px){.pdf-grid{grid-template-columns:1fr}#pdf-prev{margin:0 auto}}
+.storebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-8px 0 16px;padding:8px 14px;border-radius:12px;background:rgba(255,250,240,.8);border:1px solid var(--line);font-size:13px}
+.storebar #store-text{flex:1;min-width:200px}
+.storebar.warn{background:#fff1ee;border-color:var(--red)}
+.audio-badge{display:inline-block;font-size:11px;background:var(--indigo);color:#fff;border-radius:99px;padding:1px 7px;margin-right:4px;vertical-align:1px}
+#btn-rec.on{background:var(--red);animation:blink 1s steps(1) infinite}
+.yomi-line{font-size:12px;color:var(--sub);display:block;margin-top:2px}
+.yomi-line.nоyomi{color:#b05a00}
+.reader .yomi{display:block;font-family:"Zen Maru Gothic",sans-serif;font-size:13px;letter-spacing:.08em;opacity:.75;margin-top:2px}
+#yomi-hint.warn{color:#b05a00}
+.sortbar select{width:auto;padding:6px 10px}
+/* ===== 札を作る ===== */
+.make-grid{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:18px;align-items:start}
+.preview-wrap{text-align:center}
+.preview-wrap .fuda{--w:180px;width:180px;margin:0 auto}
+.deck-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin:26px 0 12px}
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.deck-item{background:rgba(255,250,240,.7);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.deck-item .fuda{--w:110px;width:110px;margin:0 auto}
+.deck-item p{margin:0;font-size:13px;line-height:1.5;min-height:3em}
+.deck-item .acts{display:flex;gap:6px;justify-content:center}
+.deck-item.editing{outline:3px solid var(--indigo)}
+.empty{padding:30px;text-align:center;color:var(--sub);border:2px dashed var(--line);border-radius:12px}
+details.tools{margin-top:22px}
+details.tools summary{cursor:pointer;font-weight:700;color:var(--sub);padding:6px 0}
+.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
+
+/* ===== あそぶ ===== */
+.setup{max-width:560px;margin:10px auto}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
+.check{display:flex;align-items:center;gap:8px;margin-top:14px;font-weight:700;font-size:14px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--red)}
+.rules{font-size:13px;color:var(--sub);line-height:1.8;background:var(--paper);border-radius:10px;padding:10px 14px;margin:16px 0}
+.rules b{color:var(--ink)}
+
+.board{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;margin-bottom:12px}
+.player{border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.player.you{background:var(--red2)} .player.cpu{background:var(--indigo2)}
+.player .name{font-weight:900;font-size:16px}
+.player .detail{font-size:12px;color:var(--sub)}
+.player .pts{font-size:30px;font-weight:900;font-variant-numeric:tabular-nums}
+.player.you .pts{color:var(--red)} .player.cpu .pts{color:var(--indigo)}
+.remain{display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:12px;color:var(--sub);padding:0 6px}
+.remain b{font-size:22px;color:var(--ink)}
+
+.reader{
+  background:#2b2118;color:#fff6e0;border-radius:14px;padding:14px 18px;margin-bottom:12px;
+  display:flex;align-items:center;gap:14px;min-height:76px;position:relative;
+}
+.reader .no{font-size:12px;opacity:.7;white-space:nowrap}
+.reader .text{font-family:"Kaisei Decol",serif;font-size:clamp(18px,3.2vw,26px);letter-spacing:.06em;flex:1;line-height:1.5}
+.reader .text .cursor{display:inline-block;width:.5em;border-bottom:2px solid #fff6e0;animation:blink .8s steps(1) infinite;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+.msg{min-height:30px;text-align:center;font-weight:900;font-size:17px;margin-bottom:8px;transition:color .2s}
+.msg.you{color:var(--red)} .msg.cpu{color:var(--indigo)} .msg.miss{color:#c0392b} .msg.info{color:var(--sub)}
+.msg.pop{animation:pop .35s}
+@keyframes pop{0%{transform:scale(.8);opacity:.3}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+
+.field{
+  background:#3d5a3a;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:24px 24px;border-radius:16px;padding:18px;border:6px solid #6b4a2b;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--cw,96px),1fr));gap:14px;min-height:220px;
+}
+.field .fuda{--w:var(--cw,96px);cursor:pointer;transition:transform .12s,box-shadow .12s,opacity .5s}
+.field .fuda:hover{transform:translateY(-3px) rotate(var(--rot,0deg))!important;box-shadow:inset 0 0 0 4px var(--card),inset 0 0 0 5px #c9a978,0 8px 14px rgba(0,0,0,.35)}
+.field.locked .fuda{cursor:not-allowed}
+.fuda.you-miss{animation:shake .4s;outline:4px solid #e74c3c}
+.fuda.cpu-miss{animation:shake .4s;outline:4px solid #5b7bd5}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fuda.got-you,.fuda.got-cpu{pointer-events:none;opacity:0}
+.fuda.got-you{transform:translateY(60px) scale(.6) rotate(-12deg)!important;outline:4px solid var(--red)}
+.fuda.got-cpu{transform:translateY(-60px) scale(.6) rotate(12deg)!important;outline:4px solid var(--indigo)}
+.fuda.gone{visibility:hidden}
+.game-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:10px;flex-wrap:wrap}
+.game-foot .hint{margin:0}
+
+/* ===== モーダル・トースト ===== */
+.overlay{position:fixed;inset:0;background:rgba(30,20,10,.5);display:grid;place-items:center;z-index:20;padding:20px}
+.overlay[hidden]{display:none}
+.dialog{background:var(--card);border-radius:18px;padding:24px;max-width:460px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.3);text-align:center}
+.dialog h3{margin:0 0 8px;font-family:"Kaisei Decol",serif;font-size:28px}
+.dialog .acts{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.result-box{background:var(--card);border-radius:18px;padding:18px 20px;width:min(940px,100%);max-height:94vh;overflow:auto;box-shadow:0 20px 50px rgba(0,0,0,.35);text-align:center}
+.res-head{margin:0 0 10px;font-family:"Kaisei Decol",serif;font-size:26px;letter-spacing:.3em}
+.res-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.res-col{border-radius:14px;padding:10px;min-height:160px;display:flex;flex-direction:column}
+.res-col.you{background:var(--red2)} .res-col.cpu{background:var(--indigo2)}
+.res-name{font-weight:900;font-size:16px;margin-bottom:8px}
+.res-name b{font-size:28px;margin:0 2px;font-variant-numeric:tabular-nums}
+.res-col.you .res-name b{color:var(--red)} .res-col.cpu .res-name b{color:var(--indigo)}
+.res-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(50px,1fr));gap:6px;align-content:start;flex:1;perspective:600px}
+.res-cards .fuda{--w:50px;box-shadow:inset 0 0 0 3px var(--card),inset 0 0 0 4px #c9a978,0 2px 4px rgba(0,0,0,.2);animation:flipin .32s ease-out both}
+.res-cards .fuda .ftext{display:none}
+.res-cards .fuda .head{font-size:15px;width:46%}
+.res-pen.none{color:var(--sub)}
+.res-cards .fuda .fuda-in{inset:4px}
+@keyframes flipin{0%{transform:rotateY(90deg) translateY(-14px);opacity:0}100%{transform:none;opacity:1}}
+.res-pen{min-height:26px;margin-top:8px;font-weight:900;color:#c0392b;opacity:0;transition:opacity .3s}
+.res-pen.on{opacity:1}
+.res-final{margin-top:14px;animation:pop .5s}
+.res-title{font-family:"Kaisei Decol",serif;font-size:clamp(28px,6vw,46px);letter-spacing:.08em}
+.res-score{font-size:18px;font-weight:900;margin-top:4px}
+.res-score .y{color:var(--red)} .res-score .c{color:var(--indigo)}
+.result-box .acts{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.sound-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.sound-row select{width:auto}
+.sound-row input[type=range]{width:120px;accent-color:var(--red)}
+.mute-btn{position:fixed;right:14px;bottom:14px;z-index:15;width:44px;height:44px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.25)}
+.result-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.result-row div{border-radius:12px;padding:10px}
+.result-row .big{font-size:34px;font-weight:900}
+.result-row .heads{font-family:"Kaisei Decol",serif;font-size:15px;letter-spacing:.15em;word-break:break-all;margin-top:4px;min-height:1.4em}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;opacity:0;transition:.25s;z-index:30;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:720px){
+  .make-grid{grid-template-columns:1fr}
+  .preview-wrap .fuda{--w:140px;width:140px}
+  .tools-grid,.setup-grid{grid-template-columns:1fr}
+  .board{grid-template-columns:1fr 1fr}
+  .remain{grid-column:1/-1;flex-direction:row;gap:6px;order:3}
+  .field{padding:10px;gap:9px;border-width:4px}
+  main{padding:12px}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="mark">混</span>混具なカルタ<small class="sub">-Magna Carta-</small></h1>
+  <nav>
+    <a href="#make" id="tab-make">札を作る</a>
+    <a href="#play" id="tab-play">あそぶ</a>
+  </nav>
+</header>
+
+<main>
+<!-- ================= 札を作るモード ================= -->
+<section id="make">
+  <div class="deckbar">
+    <label for="deck-sel">デッキ</label>
+    <select id="deck-sel"></select>
+    <p class="hint" id="deck-meta"></p>
+    <div class="row">
+      <button class="btn small" id="btn-deck-edit">名前・作った人</button>
+      <button class="btn small" id="btn-deck-new">＋新しいデッキ</button>
+      <button class="btn small ghost" id="btn-deck-del">デッキを消す</button>
+    </div>
+  </div>
+  <div class="storebar" id="storebar"><span id="store-text">保存先を確認しています…</span><button class="btn small" id="btn-folder" hidden></button></div>
+  <div class="panel">
+    <h2 id="form-title">新しい札を作る</h2>
+    <form id="card-form" class="make-grid" autocomplete="off">
+      <div>
+        <label class="f" for="f-read">読み札（読み上げる文）</label>
+        <textarea id="f-read" rows="2" placeholder="例）朝起きて　窓をあければ　青い空"></textarea>
+        <label class="f" for="f-yomi">読み方 <span style="font-weight:500">（声で読むときの読み。漢字や英語を正しく読ませたいときに、ひらがなで）</span></label>
+        <div class="row" style="flex-wrap:nowrap">
+          <input type="text" id="f-yomi" placeholder="例）あさおきて　まどをあければ　あおいそら" style="flex:1;min-width:0">
+          <button type="button" class="btn small indigo" id="btn-say" style="white-space:nowrap">🔈 声で確認</button>
+        </div>
+        <p class="hint" id="yomi-hint"></p>
+        <div class="row" style="gap:12px">
+          <div style="flex:1;min-width:120px">
+            <label class="f" for="f-head">頭文字</label>
+            <input type="text" id="f-head" maxlength="2" placeholder="自動">
+          </div>
+          <div style="flex:1;min-width:120px">
+            <label class="f" for="f-emoji">絵（絵文字）</label>
+            <input type="text" id="f-emoji" maxlength="8" placeholder="例）☀️">
+          </div>
+        </div>
+        <label class="f">自分の絵 <span style="font-weight:500">（あるときは絵文字より優先）</span></label>
+        <div class="img-row">
+          <button type="button" class="btn small indigo" id="btn-draw">絵を描く</button>
+          <span class="btn small file-btn">画像から作る<input type="file" accept="image/*" id="f-file"></span>
+          <button type="button" class="btn small ghost" id="btn-noimg" hidden>絵を外す</button>
+        </div>
+        <label class="f">読み上げの声 <span style="font-weight:500">（あると対戦でその声で読みます）</span></label>
+        <div class="img-row">
+          <button type="button" class="btn small indigo" id="btn-rec">● 録音する</button>
+          <span class="btn small file-btn">音声ファイルを選ぶ<input type="file" accept="audio/*" id="f-audio"></span>
+          <button type="button" class="btn small" id="btn-play" hidden>▶ 聞く</button>
+          <button type="button" class="btn small ghost" id="btn-noaudio" hidden>声を外す</button>
+          <span class="hint" id="rec-info" style="margin:0"></span>
+        </div>
+        <label class="f" for="f-text">取り札に書く文 <span style="font-weight:500">（空なら読み札と同じ）</span></label>
+        <input type="text" id="f-text" placeholder="省略できます">
+        <div class="row" style="margin-top:16px">
+          <button type="submit" class="btn primary" id="f-submit">札を追加</button>
+          <button type="button" class="btn ghost" id="f-cancel" hidden>編集をやめる</button>
+        </div>
+      </div>
+      <div class="preview-wrap">
+        <label class="f">取り札のプレビュー</label>
+        <div class="fuda" id="preview"></div>
+      </div>
+    </form>
+  </div>
+
+  <div class="deck-head">
+    <h2 style="margin:0">このデッキの札 <small id="deck-count"></small></h2>
+    <div class="row sortbar">
+      <label for="deck-sort" class="hint" style="margin:0">並び順</label>
+      <select id="deck-sort">
+        <option value="made">作った順</option>
+        <option value="kana">読み順（あ→ん）</option>
+        <option value="kana-r">読み順（ん→あ）</option>
+      </select>
+      <button class="btn small" id="btn-sort-save" hidden>この並びで保存</button>
+    </div>
+    <div class="row">
+      <button class="btn small" id="btn-pdf">PDFにする</button>
+      <button class="btn small ghost" id="btn-sample">サンプル札を追加</button>
+      <button class="btn small ghost" id="btn-clear">札を全部消す</button>
+      <a class="btn small indigo" href="#play" style="text-decoration:none">この札であそぶ →</a>
+    </div>
+  </div>
+  <div class="deck" id="deck"></div>
+
+  <details class="tools panel" id="share">
+    <summary>デッキの共有（闇鍋の準備）・まとめて追加</summary>
+    <div class="tools-grid">
+      <div>
+        <label class="f">ほかの人とデッキをやり取りする</label>
+        <div class="share-steps">
+          <p><b>渡すとき</b>：いま選んでいるデッキを保存して、LINEやメールで送ります。</p>
+          <div class="row">
+            <button class="btn small indigo" id="btn-file-save">ファイルで保存</button>
+            <button class="btn small indigo" id="btn-pdf2">PDFで保存</button>
+            <button class="btn small" id="btn-export">テキストで書き出す</button>
+            <button class="btn small" id="btn-copy">コピー</button>
+          </div>
+          <p><b>もらったとき</b>：ファイル（デッキのファイル・データ入りのPDF）かテキストを読み込むと<b>新しいデッキ</b>として追加されます。</p>
+          <div class="row">
+            <span class="btn small primary file-btn">ファイルを読み込む<input type="file" id="f-deckfile" accept=".json,.txt,.pdf,application/json,text/plain,application/pdf"></span>
+            <button class="btn small indigo" id="btn-import">下のテキストから読み込む</button>
+          </div>
+        </div>
+        <textarea id="io" rows="4" placeholder="デッキのテキストを書き出すとここに出ます。もらったテキストはここに貼り付けてください"></textarea>
+      </div>
+      <div>
+        <label class="f" for="bulk">このデッキにまとめて追加</label>
+        <textarea id="bulk" rows="6" placeholder="1行に1枚。&#10;「読み札|絵文字|読み方」の形でも書けます&#10;例）いぬのさんぽ　いつものみちで　ごあいさつ|🐕"></textarea>
+        <button class="btn small primary" id="btn-bulk" style="margin-top:8px">追加する</button>
+      </div>
+    </div>
+    <p class="hint">「あそぶ」でデッキを2つ以上選ぶと闇鍋になります。絵や声の入ったデッキはテキストがとても長くなるので、ファイルかPDFでのやり取りがおすすめです。</p>
+  </details>
+</section>
+
+<!-- ================= プレイモード ================= -->
+<section id="play" hidden>
+  <div class="setup panel" id="setup">
+    <h2>CPUと対戦</h2>
+    <label class="f">使うデッキ <span style="font-weight:500">（2つ以上選ぶと闇鍋）</span></label>
+    <div class="deck-pick" id="s-decks"></div>
+    <div class="nabe" id="nabe-info" hidden></div>
+    <div class="setup-grid">
+      <div>
+        <label class="f" for="s-count">場に並べる札</label>
+        <select id="s-count"></select>
+      </div>
+      <div>
+        <label class="f" for="s-level">CPUの強さ</label>
+        <select id="s-level">
+          <option value="weak">よわい</option>
+          <option value="normal" selected>ふつう</option>
+          <option value="strong">つよい</option>
+          <option value="master">名人</option>
+        </select>
+      </div>
+      <div>
+        <label class="f" for="s-speed">読む速さ</label>
+        <select id="s-speed">
+          <option value="slow">ゆっくり</option>
+          <option value="normal" selected>ふつう</option>
+          <option value="fast">はやい</option>
+        </select>
+      </div>
+      <div>
+        <label class="f" for="s-readon">札が取られたあと</label>
+        <select id="s-readon">
+          <option value="stop">読むのをやめて次の札へ</option>
+          <option value="cpu">CPUが取ったときは最後まで読む</option>
+          <option value="all">だれが取っても最後まで読む</option>
+        </select>
+      </div>
+      <div>
+        <label class="check"><input type="checkbox" id="s-voice" checked> 声で読み上げる（録音があればその声）</label>
+        <label class="check"><input type="checkbox" id="s-kara"> 空札をまぜる</label>
+      </div>
+      <div style="grid-column:1/-1">
+        <label class="f">音</label>
+        <div class="sound-row">
+          <span>BGM</span>
+          <select id="s-bgm"><option value="builtin">和風（内蔵）</option><option value="own">自分の曲</option><option value="off">なし</option></select>
+          <span class="btn small file-btn" id="bgm-pick" hidden>曲を選ぶ<input type="file" accept="audio/*" id="f-bgm"></span>
+          <span class="hint" id="bgm-name" style="margin:0"></span>
+        </div>
+        <div class="sound-row">
+          <label class="check" style="margin:0"><input type="checkbox" id="s-se" checked> 効果音</label>
+          <span>音量</span><input type="range" id="s-vol" min="0" max="100" value="70">
+        </div>
+        <div class="sound-row">
+          <span>機械の声</span><select id="s-voicename"><option value="">おまかせ</option></select>
+          <button type="button" class="btn small" id="btn-voicetest">声を試す</button>
+          <button type="button" class="btn small" id="btn-testse">パァン！を試す</button>
+        </div>
+      </div>
+      <div id="dup-wrap" hidden style="grid-column:1/-1">
+        <label class="f" for="s-dup">同じ札が何枚かあるとき</label>
+        <select id="s-dup">
+          <option value="all">全部場に出す（どれを取ってもOK）</option>
+          <option value="one">1枚にまとめる</option>
+        </select>
+      </div>
+    </div>
+    <div class="rules">
+      <b>あそびかた</b>　読み札が読まれたら、合う取り札をCPUより早くタップ！<br>
+      まちがえると<b>お手つき（−1点）</b>で、その札はもう取れません。<br>
+      <b>空札</b>＝場にない札。読まれても取ってはいけません。<br>
+      声を録音した札は、その声で読まれます。<br>
+      同じ札が何枚かあるときは、<b>どれを取ってもOK</b>（読まれるのも枚数分）。<br>
+      最後に「取った枚数 − お手つき」が多いほうの勝ち。
+    </div>
+    <div style="text-align:center"><button class="btn primary big" id="btn-start">はじめる</button></div>
+  </div>
+
+  <div id="game" hidden>
+    <div class="board">
+      <div class="player you"><div><div class="name">あなた</div><div class="detail" id="you-detail"></div></div><div class="pts" id="you-pts">0</div></div>
+      <div class="remain">のこり<b id="remain">0</b>枚</div>
+      <div class="player cpu"><div><div class="name">CPU</div><div class="detail" id="cpu-detail"></div></div><div class="pts" id="cpu-pts">0</div></div>
+    </div>
+    <div class="reader"><span class="no" id="read-no"></span><div style="flex:1"><div class="text" id="read-text"></div><span class="yomi" id="read-yomi"></span></div></div>
+    <div class="msg" id="msg"></div>
+    <div class="field" id="field"></div>
+    <div class="game-foot">
+      <p class="hint">CPUの強さ：<b id="lv-name"></b></p>
+      <div class="row">
+        <button class="btn small" id="btn-repeat">もう一度読む</button>
+        <button class="btn small ghost" id="btn-quit">やめる</button>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="overlay" id="ov-draw" hidden>
+  <div class="dialog draw">
+    <h3>絵を描く</h3>
+    <canvas id="cv" width="480" height="480"></canvas>
+    <div class="palette" id="palette"></div>
+    <div class="draw-tools">
+      <button type="button" class="btn small" data-size="4">細</button>
+      <button type="button" class="btn small on" data-size="10">中</button>
+      <button type="button" class="btn small" data-size="22">太</button>
+      <button type="button" class="btn small" id="d-erase">消しゴム</button>
+      <button type="button" class="btn small" id="d-fill">背景をぬる</button>
+      <button type="button" class="btn small" id="d-undo">もどす</button>
+      <button type="button" class="btn small ghost" id="d-clear">全部消す</button>
+      <span class="btn small file-btn">画像を読み込む<input type="file" accept="image/*" id="d-file"></span>
+    </div>
+    <div class="acts"><button type="button" class="btn ghost" id="d-cancel">やめる</button><button type="button" class="btn primary" id="d-ok">この絵を使う</button></div>
+  </div>
+</div>
+<div class="overlay" id="ov-pdf" hidden>
+  <div class="dialog" style="max-width:560px;text-align:left">
+    <h3 style="font-size:22px;text-align:center">PDFにする（印刷用）</h3>
+    <p class="hint" id="pdf-deck" style="text-align:center"></p>
+    <div class="pdf-grid">
+      <div>
+        <label class="check"><input type="checkbox" id="p-tori" checked> 取り札</label>
+        <label class="check"><input type="checkbox" id="p-yomi" checked> 読み札</label>
+        <label class="check"><input type="checkbox" id="p-cover" checked> 表紙（札の一覧）</label>
+        <label class="check"><input type="checkbox" id="p-cut" checked> 切り取り線</label>
+        <label class="check"><input type="checkbox" id="p-embed" checked> デッキのデータを埋め込む</label>
+        <p class="hint">データを埋め込んだPDFは、「ファイルを読み込む」で選ぶとデッキとして読み込めます。PDFを人に送れば、印刷もできて、デッキの受け渡しにもなります。</p>
+      </div>
+      <div><canvas id="pdf-prev" width="380" height="537"></canvas><p class="hint" style="text-align:center">1ページ目の見本</p></div>
+    </div>
+    <p class="hint" id="pdf-info"></p>
+    <div class="progress" id="pdf-prog" hidden><i></i></div>
+    <div class="acts"><button type="button" class="btn ghost" id="pdf-no">閉じる</button><button type="button" class="btn primary" id="pdf-go">PDFを作って保存</button></div>
+  </div>
+</div>
+<div class="overlay" id="ov-form" hidden>
+  <form class="dialog" id="form-dlg" style="text-align:left">
+    <h3 id="form-dlg-title" style="font-size:20px;text-align:center"></h3>
+    <label class="f" for="fd-name">デッキの名前</label>
+    <input type="text" id="fd-name" maxlength="40">
+    <label class="f" for="fd-author">作った人 <span style="font-weight:500">（闇鍋のとき「だれの札か」が出ます）</span></label>
+    <input type="text" id="fd-author" maxlength="30">
+    <div class="acts"><button type="button" class="btn ghost" id="fd-no">やめる</button><button type="submit" class="btn primary">決定</button></div>
+  </form>
+</div>
+<div class="overlay" id="ov-confirm" hidden>
+  <div class="dialog"><p id="confirm-text" style="font-weight:700"></p>
+    <div class="acts"><button class="btn ghost" id="confirm-no">やめる</button><button class="btn primary" id="confirm-yes">はい</button></div>
+  </div>
+</div>
+<div class="overlay" id="ov-result" hidden>
+  <div class="result-box">
+    <h3 class="res-head">集計</h3>
+    <div class="res-cols">
+      <div class="res-col you"><div class="res-name">あなた <b id="rc-you">0</b>枚</div><div class="res-cards" id="rcards-you"></div><div class="res-pen" id="rp-you"></div></div>
+      <div class="res-col cpu"><div class="res-name">CPU <b id="rc-cpu">0</b>枚</div><div class="res-cards" id="rcards-cpu"></div><div class="res-pen" id="rp-cpu"></div></div>
+    </div>
+    <div class="res-final" id="res-final" hidden><div class="res-title" id="res-title"></div><div class="res-score" id="res-score"></div></div>
+    <div class="acts">
+      <button class="btn ghost" id="res-skip">とばす</button>
+      <button class="btn ghost" id="res-setup" hidden>設定にもどる</button>
+      <button class="btn primary" id="res-again" hidden>もう一回</button>
+    </div>
+  </div>
+</div>
+<button class="mute-btn" id="btn-mute" title="音を消す" hidden>🔊</button>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const STORE = 'tezukuri-karuta-v1';
+const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const uid = () => 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const rand = (a, b) => a + Math.random() * (b - a);
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+const SAMPLE = [
+  ['あさおきて　まどをあければ　あおいそら','☀️'],
+  ['いぬのさんぽ　いつものみちで　ごあいさつ','🐕'],
+  ['うみにいき　すなのおしろを　つくったよ','🏖️'],
+  ['えんぴつで　えにっきかいて　ねるじかん','✏️'],
+  ['おにぎりを　おおきなくちで　ほおばった','🍙'],
+  ['かさをさし　かえるといっしょに　あめのみち','☔'],
+  ['きのぼりで　きのみをひとつ　みつけたよ','🌳'],
+  ['くもがゆく　くじらのかたちに　みえてきた','☁️'],
+  ['けんかして　けさはごめんと　いえたかな','🤝'],
+  ['こたつにて　こねこがまるく　ねむってる','🐈'],
+  ['さくらさく　さかみちのぼって　しんがっき','🌸'],
+  ['しゃぼんだま　しずかにとんで　そらのなか','🫧'],
+  ['すいかわり　すこしみぎだと　みんなのこえ','🍉'],
+  ['せんたくもの　せいくらべして　かぜにゆれ','👕'],
+  ['たんぽぽの　たねがふわりと　たびにでる','🌼'],
+  ['つきみだんご　つみあげかぞえて　ななつめだ','🌕'],
+  ['なつまつり　なりひびくたいこ　どんどこどん','🏮'],
+  ['はみがきは　はやねのまえの　おやくそく','🪥'],
+  ['ほしぞらに　ほうきぼしひとつ　ながれたよ','🌠'],
+  ['もみじがり　もえるようなあか　やまいっぱい','🍁'],
+];
+
+function autoHead(s) {
+  const ch = [...String(s).trim()].find(x => !/[\s　「『（(【]/.test(x));
+  return ch || '？';
+}
+function normalize(c) {
+  if (!c || typeof c.read !== 'string' || !c.read.trim()) return null;
+  const read = c.read.trim();
+  const yomi = String(c.yomi || '').trim();
+  return { id: c.id || uid(), read, yomi, head: String(c.head || '').trim() || autoHead(yomi || read),
+           emoji: String(c.emoji || '').trim(), text: String(c.text || '').trim(),
+           img: typeof c.img === 'string' && /^data:image\/(png|jpeg|webp|gif);base64,/.test(c.img) ? c.img : '',
+           audio: typeof c.audio === 'string' && /^data:audio\/[\w.+-]+(;[\w=.+-]+)*;base64,/.test(c.audio) ? c.audio : '' };
+}
+const STORE2 = 'tezukuri-karuta-v2';
+const sampleCards = () => SAMPLE.map(([read, emoji]) => normalize({ read, emoji }));
+const did = () => 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+function mkDeck(name, author, cards) { return { id: did(), name: String(name || '').trim().slice(0, 40) || '名前のないデッキ', author: String(author || '').trim().slice(0, 30), cards: cards || [] }; }
+function loadAll() {
+  try {
+    const r = localStorage.getItem(STORE2);
+    if (r) {
+      const d = JSON.parse(r);
+      if (d && Array.isArray(d.decks) && d.decks.length) {
+        const decks = d.decks.map(x => ({ ...mkDeck(x.name, x.author), id: x.id || did(), cards: (x.cards || []).map(normalize).filter(Boolean) }));
+        return { decks, active: decks.some(x => x.id === d.active) ? d.active : decks[0].id };
+      }
+    }
+    const old = localStorage.getItem(STORE); // 前のバージョンからの引っ越し
+    if (old) { const a = JSON.parse(old); if (Array.isArray(a)) { const dk = mkDeck('わたしのデッキ', '', a.map(normalize).filter(Boolean)); return { decks: [dk], active: dk.id }; } }
+  } catch (e) {}
+  const dk = mkDeck('サンプル（季節のかるた）', '', sampleCards());
+  return { decks: [dk], active: dk.id };
+}
+const ALL = loadAll();
+const cur = () => ALL.decks.find(x => x.id === ALL.active) || ALL.decks[0];
+let deck = cur().cards;   // いま編集中のデッキの札
+/* ---- 保存：ブラウザの中（IndexedDB）＋ PCのフォルダ ---- */
+const dirty = new Set(), deleted = new Set();
+let persistT = null, idbOK = false;
+function touch(d) { d.updated = Date.now(); dirty.add(d.id); }
+function save(changed = true) {
+  cur().cards = deck;
+  if (changed) touch(cur());
+  clearTimeout(persistT); persistT = setTimeout(() => { persistT = null; persist(); }, 200);
+  return true;
+}
+const idbOpen = (() => { let p; return () => p || (p = new Promise((res, rej) => {
+  const r = indexedDB.open('tezukuri-karuta', 1);
+  r.onupgradeneeded = () => r.result.createObjectStore('kv');
+  r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+})); })();
+async function idbGet(k) { const db = await idbOpen(); return new Promise((res, rej) => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
+async function idbSet(k, v) { const db = await idbOpen(); return new Promise((res, rej) => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = () => res(); tx.onerror = tx.onabort = () => rej(tx.error); }); }
+const snapshot = () => ({ decks: ALL.decks, active: ALL.active });
+async function persist() {
+  if (idbOK) { try { await idbSet('state', snapshot()); } catch (e) { toast('ブラウザに保存できませんでした（容量がいっぱいかもしれません）'); } }
+  else { try { localStorage.setItem(STORE2, JSON.stringify(snapshot())); } catch (e) { toast('保存容量がいっぱいです。PCのフォルダに保存してください'); } }
+  if (dir && dirOK) {
+    const ids = [...dirty], gone = [...deleted]; dirty.clear(); deleted.clear();
+    try {
+      for (const id of gone) await removeDeckFile(id);
+      for (const id of ids) { const d = ALL.decks.find(x => x.id === id); if (d) await writeDeck(d); }
+    } catch (e) { console.error(e); dirOK = false; ids.forEach(i => dirty.add(i)); gone.forEach(i => deleted.add(i)); renderStore(); toast('PCのフォルダに保存できませんでした。つなぎ直してください'); }
+  } else { dirty.clear(); deleted.clear(); }
+}
+function flushSave() { if (persistT) { clearTimeout(persistT); persistT = null; persist(); } }
+window.addEventListener('pagehide', flushSave);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
+const fixDeck = x => ({ ...mkDeck(x.name, x.author), id: x.id || did(), updated: x.updated || 0, cards: (x.cards || []).map(normalize).filter(Boolean) });
+
+/* PCのフォルダ（Chrome・Edge） */
+const inFrame = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+const canFolder = typeof window.showDirectoryPicker === 'function' && !inFrame;
+let dir = null, dirOK = false, fileOf = {};
+function filePayload(d) { return { ...deckPayload(d), id: d.id, updated: d.updated || 0 }; }
+async function writeTo(fh, data) { const w = await fh.createWritable(); await w.write(data); await w.close(); }
+async function writeDeck(d) {
+  const base = safeName(d.name);
+  let fname = `${base}.karuta.json`;
+  const taken = Object.entries(fileOf).filter(([id]) => id !== d.id).map(([, n]) => n);
+  if (taken.includes(fname)) fname = `${base}_${d.id.slice(-4)}.karuta.json`;
+  await writeTo(await dir.getFileHandle(fname, { create: true }), JSON.stringify(filePayload(d)));
+  const old = fileOf[d.id]; fileOf[d.id] = fname;
+  if (old && old !== fname) { try { await dir.removeEntry(old); } catch (e) {} }
+}
+async function removeDeckFile(id) { const n = fileOf[id]; if (!n) return; try { await dir.removeEntry(n); } catch (e) {} delete fileOf[id]; }
+async function syncFolder() {
+  fileOf = {};
+  const found = [];
+  for await (const [name, h] of dir.entries()) {
+    if (h.kind !== 'file' || !/\.karuta\.json$/i.test(name)) continue;
+    try { found.push({ name, h, d: JSON.parse(await (await h.getFile()).text()) }); } catch (e) {}
+  }
+  let added = 0, newer = 0;
+  for (const f of found) {
+    const d = f.d; if (!d || !Array.isArray(d.cards)) continue;
+    if (!d.id) { d.id = did(); d.updated = d.updated || Date.now(); f.fresh = true; }
+    if (fileOf[d.id]) { d.id = did(); f.fresh = true; } // 同じidのファイルが2つあるとき
+    fileOf[d.id] = f.name;
+    const ex = ALL.decks.find(x => x.id === d.id);
+    if (!ex) { const nd = fixDeck(d); ALL.decks.push(nd); added++; if (f.fresh) await writeTo(f.h, JSON.stringify(filePayload(nd))); }
+    else if ((d.updated || 0) > (ex.updated || 0)) { Object.assign(ex, fixDeck(d)); newer++; }
+  }
+  dirOK = true;
+  for (const d of ALL.decks) {
+    const f = found.find(x => x.d && x.d.id === d.id);
+    if (!f || (d.updated || 0) > (f.d.updated || 0)) await writeDeck(d);
+  }
+  deck = cur().cards;
+  await persist();
+  return { added, newer, files: found.length };
+}
+function renderStore() {
+  const bar = $('#storebar'), t = $('#store-text'), b = $('#btn-folder');
+  bar.classList.remove('warn'); b.hidden = false; b.className = 'btn small';
+  if (dir && dirOK) { t.innerHTML = `💾 保存先：<b>PCのフォルダ「${esc(dir.name)}」</b>　デッキごとにファイルで自動保存しています（ブラウザの中にも控えあり）`; b.textContent = 'フォルダを変える'; }
+  else if (dir) { bar.classList.add('warn'); t.innerHTML = `PCのフォルダ「${esc(dir.name)}」につなぎ直すと、フォルダへの保存が再開します。`; b.textContent = 'フォルダにつなぎ直す'; b.className = 'btn small primary'; }
+  else if (canFolder) { t.textContent = '保存先：このブラウザの中だけ（ブラウザのデータを消すと札も消えます）'; b.textContent = 'PCのフォルダに保存する…'; b.className = 'btn small indigo'; }
+  else { t.textContent = inFrame ? '保存先：このブラウザの中（PCのフォルダへの保存は、オフライン版をChrome・Edgeで開くと使えます）' : '保存先：このブラウザの中（PCのフォルダへの保存はChrome・Edgeで使えます）'; b.hidden = true; }
+}
+async function afterSync(r) {
+  renderStore(); renderDeckBar(); resetForm();
+  toast(`PCのフォルダとつながりました（${r.files}ファイル${r.added ? `・${r.added}デッキ読み込み` : ''}）`);
+}
+$('#btn-folder').addEventListener('click', async () => {
+  try {
+    if (dir && !dirOK) {
+      if ((await dir.requestPermission({ mode: 'readwrite' })) !== 'granted') { toast('フォルダを使う許可がありませんでした'); return; }
+    } else {
+      const h = await window.showDirectoryPicker({ id: 'karuta-decks', mode: 'readwrite' });
+      dir = h; dirOK = false;
+      try { await idbSet('dir', h); } catch (e) {}
+    }
+    await afterSync(await syncFolder());
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;
+    console.error(e); dirOK = false; renderStore();
+    toast('この画面ではPCのフォルダを使えません（オフライン版をChrome・Edgeで開くと使えます）');
+  }
+});
+(async () => {
+  try {
+    const st = await idbGet('state');
+    idbOK = true;
+    if (st && Array.isArray(st.decks) && st.decks.length) {
+      ALL.decks = st.decks.map(fixDeck);
+      ALL.active = ALL.decks.some(x => x.id === st.active) ? st.active : ALL.decks[0].id;
+      deck = cur().cards;
+    } else {
+      await idbSet('state', snapshot()); // localStorage から引っ越し
+    }
+    try { localStorage.removeItem(STORE2); localStorage.removeItem(STORE); } catch (e) {}
+    if (canFolder) {
+      const h = await idbGet('dir');
+      if (h) {
+        dir = h;
+        try { if ((await h.queryPermission({ mode: 'readwrite' })) === 'granted') await syncFolder(); } catch (e) { dirOK = false; }
+      }
+    }
+  } catch (e) { idbOK = false; }
+  renderStore();
+  if (!G) route();
+})();
+const readKey = c => c.read.replace(/[\s　、。,.!！?？・「」『』]/g, '');
+
+function fudaHTML(c) {
+  return `<div class="fuda-in"><span class="head">${esc(c.head)}</span><span class="pic">${c.img ? `<img src="${esc(c.img)}" alt="">` : esc(c.emoji || '')}</span><span class="ftext">${esc(c.text || c.read)}</span></div>`;
+}
+
+let toastT;
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), 2000); }
+function ask(text, onYes) {
+  $('#confirm-text').textContent = text; $('#ov-confirm').hidden = false;
+  $('#confirm-yes').onclick = () => { $('#ov-confirm').hidden = true; onYes(); };
+  $('#confirm-no').onclick = () => { $('#ov-confirm').hidden = true; };
+}
+
+/* ================= 札を作るモード ================= */
+let editingId = null;
+let currentImg = '', currentAudio = '';
+const form = $('#card-form');
+const readForm = () => ({ read: $('#f-read').value.trim(), yomi: $('#f-yomi').value.trim(), head: $('#f-head').value.trim(), emoji: $('#f-emoji').value.trim(), text: $('#f-text').value.trim(), img: currentImg, audio: currentAudio });
+
+function updatePreview() {
+  const f = readForm();
+  $('#f-head').placeholder = f.read ? `自動（${autoHead(f.yomi || f.read)}）` : '自動';
+  const yh = $('#yomi-hint'); yh.classList.remove('warn');
+  if (f.yomi) yh.textContent = `声ではこう読みます：「${f.yomi}」`;
+  else if (/[\u3400-\u9fff々〆a-zA-Zａ-ｚＡ-Ｚ0-9０-９]/.test(f.read)) { yh.textContent = '漢字・英数字が入っています。「声で確認」で聞いて、読み間違えるときは読み方を入れてください。'; yh.classList.add('warn'); }
+  else yh.textContent = '';
+  $('#preview').innerHTML = fudaHTML({ read: f.read || '読み札の文', head: f.head || (f.read ? autoHead(f.yomi || f.read) : 'よ'), emoji: f.emoji || (f.read || f.img ? '' : '🎴'), text: f.text, img: f.img });
+  $('#btn-draw').textContent = currentImg ? '絵を描き直す' : '絵を描く';
+  $('#btn-noimg').hidden = !currentImg;
+  $('#btn-play').hidden = $('#btn-noaudio').hidden = !currentAudio;
+  if (!rec) $('#rec-info').textContent = currentAudio ? `声あり（${Math.max(1, Math.round(currentAudio.length * .75 / 1024))}KB）` : '';
+}
+['#f-read', '#f-yomi', '#f-head', '#f-emoji', '#f-text'].forEach(s => $(s).addEventListener('input', updatePreview));
+
+function resetForm() {
+  form.reset(); editingId = null; currentImg = ''; currentAudio = ''; if (rec) { recCancel = true; rec.stop(); } stopAudio();
+  $('#form-title').textContent = '新しい札を作る'; $('#f-submit').textContent = '札を追加'; $('#f-cancel').hidden = true;
+  updatePreview(); renderDeck();
+}
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const f = readForm();
+  if (!f.read) { toast('読み札の文を入れてください'); $('#f-read').focus(); return; }
+  if (editingId) {
+    const i = deck.findIndex(c => c.id === editingId);
+    if (i >= 0) deck[i] = normalize({ ...f, id: editingId });
+    toast('札を直しました');
+  } else {
+    deck.push(normalize(f)); toast('札を追加しました');
+  }
+  save(); resetForm(); $('#f-read').focus();
+});
+$('#f-cancel').addEventListener('click', resetForm);
+
+function renderDeck() {
+  $('#deck-count').textContent = `${deck.length}枚`;
+  if (document.querySelector('#deck-sel option')) { const o = $(`#deck-sel option[value="${ALL.active}"]`); if (o) o.textContent = `${cur().name}（${deck.length}枚）`; }
+  const el = $('#deck');
+  if (!deck.length) { el.innerHTML = '<div class="empty" style="grid-column:1/-1">まだ札がありません。上のフォームで作るか、サンプル札を追加してください。</div>'; return; }
+  const mode = $('#deck-sort').value;
+  $('#btn-sort-save').hidden = mode === 'made';
+  el.innerHTML = sortedCards(deck, mode).map(c => `
+    <div class="deck-item${c.id === editingId ? ' editing' : ''}" data-id="${c.id}">
+      <div class="fuda">${fudaHTML(c)}</div>
+      <p>${c.audio ? '<span class="audio-badge">🔊 声</span>' : ''}${esc(c.read)}${c.yomi ? `<span class="yomi-line">よみ：${esc(c.yomi)}</span>` : needsYomi(c) ? '<span class="yomi-line nоyomi">⚠ 読み方なし</span>' : ''}</p>
+      <div class="acts"><button class="btn small" data-act="edit">直す</button><button class="btn small ghost" data-act="del">消す</button></div>
+    </div>`).join('');
+}
+$('#deck').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const id = b.closest('.deck-item').dataset.id;
+  const c = deck.find(x => x.id === id); if (!c) return;
+  if (b.dataset.act === 'del') {
+    ask(`「${c.read.slice(0, 16)}…」の札を消しますか？`, () => { deck = deck.filter(x => x.id !== id); if (editingId === id) resetForm(); save(); renderDeck(); });
+  } else {
+    editingId = id;
+    $('#f-read').value = c.read; $('#f-yomi').value = c.yomi || ''; $('#f-head').value = c.head === autoHead(c.yomi || c.read) ? '' : c.head;
+    $('#f-emoji').value = c.emoji; $('#f-text').value = c.text; currentImg = c.img || ''; currentAudio = c.audio || '';
+    $('#form-title').textContent = '札を直す'; $('#f-submit').textContent = '直した内容で保存'; $('#f-cancel').hidden = false;
+    updatePreview(); renderDeck();
+    window.scrollTo({ top: 0, behavior: 'smooth' }); $('#f-read').focus();
+  }
+});
+$('#btn-sample').addEventListener('click', () => {
+  const have = new Set(deck.map(c => c.read));
+  const add = sampleCards().filter(c => !have.has(c.read));
+  if (!add.length) { toast('サンプル札はもう全部入っています'); return; }
+  deck.push(...add); save(); renderDeck(); toast(`${add.length}枚追加しました`);
+});
+$('#btn-clear').addEventListener('click', () => {
+  if (!deck.length) return;
+  ask('札を全部消しますか？（元に戻せません）', () => { deck = []; save(); resetForm(); });
+});
+$('#btn-bulk').addEventListener('click', () => {
+  const lines = $('#bulk').value.split('\n').map(l => l.trim()).filter(Boolean);
+  const add = lines.map(l => { const [read, emoji, yomi] = l.split(/[|｜]/); return normalize({ read: read || '', emoji: (emoji || '').trim(), yomi: yomi || '' }); }).filter(Boolean);
+  if (!add.length) { toast('追加する行がありません'); return; }
+  deck.push(...add); save(); renderDeck(); $('#bulk').value = ''; toast(`${add.length}枚追加しました`);
+});
+/* ---- 読み順の並べ替え ---- */
+const collator = (() => { try { return new Intl.Collator('ja', { sensitivity: 'base', numeric: true }); } catch (e) { return null; } })();
+const toHira = t => t.replace(/[ァ-ヶ]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+// 頭文字を先に見て、同じ頭文字の中は読み方（なければ読み札）で並べる
+const sortKey = c => toHira(c.head || '') + '\u0001' + toHira((c.yomi || c.read).replace(/[\s　、。,.!！?？・「」『』（）()]/g, ''));
+const needsYomi = c => !c.yomi && /[\u3400-\u9fff々〆a-zA-Zａ-ｚＡ-Ｚ0-9０-９]/.test(c.read);
+function sortedCards(cards, mode) {
+  if (mode === 'made') return cards;
+  const a = cards.slice().sort((x, y) => {
+    const kx = sortKey(x), ky = sortKey(y);
+    return collator ? collator.compare(kx, ky) : (kx < ky ? -1 : kx > ky ? 1 : 0);
+  });
+  return mode === 'kana-r' ? a.reverse() : a;
+}
+$('#deck-sort').addEventListener('change', renderDeck);
+$('#btn-sort-save').addEventListener('click', () => {
+  const mode = $('#deck-sort').value;
+  ask('いまの並び順でデッキを保存しますか？（PDFや書き出しもこの順になります）', () => {
+    deck = sortedCards(deck, mode); save();
+    $('#deck-sort').value = 'made'; renderDeck(); toast('この並びで保存しました');
+  });
+});
+/* ---- デッキの切り替え ---- */
+function renderDeckBar() {
+  $('#deck-sel').innerHTML = ALL.decks.map(d => `<option value="${d.id}">${esc(d.name)}（${d.cards.length}枚）</option>`).join('');
+  $('#deck-sel').value = ALL.active;
+  const d = cur();
+  $('#deck-meta').textContent = d.author ? `作った人：${d.author}` : '';
+}
+function switchDeck(id) {
+  save(false); ALL.active = id; deck = cur().cards; save(false);
+  resetForm(); renderDeckBar();
+}
+$('#deck-sel').addEventListener('change', e => switchDeck(e.target.value));
+function askDeck(title, d, onOk) {
+  $('#form-dlg-title').textContent = title;
+  $('#fd-name').value = d.name || ''; $('#fd-author').value = d.author || '';
+  $('#ov-form').hidden = false; setTimeout(() => $('#fd-name').focus(), 50);
+  $('#form-dlg').onsubmit = e => {
+    e.preventDefault();
+    const name = $('#fd-name').value.trim();
+    if (!name) { toast('デッキの名前を入れてください'); return; }
+    $('#ov-form').hidden = true; onOk(name, $('#fd-author').value.trim());
+  };
+}
+$('#fd-no').addEventListener('click', () => { $('#ov-form').hidden = true; });
+$('#btn-deck-new').addEventListener('click', () => askDeck('新しいデッキ', { name: '', author: cur().author }, (n, a) => {
+  save(false); const d = mkDeck(n, a); ALL.decks.push(d); touch(d); switchDeck(d.id); toast('新しいデッキを作りました');
+}));
+$('#btn-deck-edit').addEventListener('click', () => askDeck('デッキの名前・作った人', cur(), (n, a) => {
+  const d = cur(); d.name = n; d.author = a; save(); renderDeckBar();
+}));
+$('#btn-deck-del').addEventListener('click', () => {
+  const d = cur();
+  ask(`デッキ「${d.name}」（${deck.length}枚）を消しますか？（元に戻せません）`, () => {
+    ALL.decks = ALL.decks.filter(x => x.id !== d.id); deleted.add(d.id);
+    if (!ALL.decks.length) { const nd = mkDeck('わたしのデッキ', d.author); ALL.decks.push(nd); touch(nd); }
+    ALL.active = ALL.decks[0].id; deck = cur().cards; save(false); resetForm(); renderDeckBar();
+    toast('デッキを消しました');
+  });
+});
+
+/* ---- 共有：書き出し・読み込み ---- */
+function deckPayload(d) {
+  return { format: 'tezukuri-karuta', version: 2, name: d.name, author: d.author,
+    cards: d.cards.map(({ read, yomi, head, emoji, text, img, audio }) => { const o = { read, head, emoji, text }; if (yomi) o.yomi = yomi; if (img) o.img = img; if (audio) o.audio = audio; return o; }) };
+}
+$('#btn-export').addEventListener('click', () => {
+  save(false); $('#io').value = JSON.stringify(deckPayload(cur()));
+  toast('書き出しました。コピーして送れます');
+});
+$('#btn-copy').addEventListener('click', async () => {
+  const t = $('#io').value; if (!t) { toast('先に「テキストで書き出す」を押してください'); return; }
+  try { await navigator.clipboard.writeText(t); toast('コピーしました'); }
+  catch (e) { $('#io').select(); toast('選択しました。手動でコピーしてください'); }
+});
+function importText(text, fallbackName) {
+  let d;
+  try { d = JSON.parse(text); } catch (e) { toast('デッキのデータとして読めませんでした'); return; }
+  let name = fallbackName || 'もらったデッキ', author = '', raw = null;
+  if (Array.isArray(d)) raw = d;
+  else if (d && Array.isArray(d.cards)) { raw = d.cards; name = d.name || name; author = d.author || ''; }
+  const cards = (raw || []).map(c => normalize({ ...c, id: undefined })).filter(Boolean);
+  if (!cards.length) { toast('札が1枚も見つかりませんでした'); return; }
+  let nm = String(name).slice(0, 36), k = 2;
+  const names = new Set(ALL.decks.map(x => x.name));
+  while (names.has(nm)) nm = `${String(name).slice(0, 34)}（${k++}）`;
+  save(false);
+  const dk = mkDeck(nm, author, cards); ALL.decks.push(dk); touch(dk);
+  switchDeck(dk.id);
+  toast(`「${nm}」（${cards.length}枚）を新しいデッキとして追加しました`);
+}
+$('#btn-import').addEventListener('click', () => { const t = $('#io').value.trim(); if (!t) { toast('テキストを貼り付けてください'); return; } importText(t); $('#io').value = ''; });
+$('#f-deckfile').addEventListener('change', e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  if (/\.pdf$/i.test(f.name) || f.type === 'application/pdf') { f.arrayBuffer().then(b => importPdf(b, f.name.replace(/\.pdf$/i, ''))).catch(() => toast('ファイルを読めませんでした')); return; }
+  const r = new FileReader();
+  r.onload = () => importText(String(r.result), f.name.replace(/\.karuta\.json$|\.json$|\.txt$/i, ''));
+  r.onerror = () => toast('ファイルを読めませんでした');
+  r.readAsText(f);
+});
+let downloads = null;
+(async () => { try { if (window.claude && claude.use) downloads = await claude.use('downloads'); } catch (e) { downloads = null; } })();
+async function saveFile(filename, data, mime) {
+  if (downloads) {
+    try { await downloads.save({ filename, data }); return 'saved'; }
+    catch (err) { if (err && err.code === 'declined') return 'declined'; if (err && err.code === 'rate_limited') return 'busy'; }
+  }
+  try {
+    const blob = data instanceof Blob ? data : new Blob([data], { type: mime });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 3000);
+    return 'saved';
+  } catch (e) { return 'fail'; }
+}
+const safeName = n => (n || 'deck').replace(/[\\/:*?"<>|]/g, '_').slice(0, 60);
+$('#btn-file-save').addEventListener('click', async () => {
+  save(false); const d = cur();
+  const r = await saveFile(`${safeName(d.name)}.karuta.json`, JSON.stringify(deckPayload(d)), 'application/json');
+  if (r === 'saved') toast('保存しました。このファイルを相手に送ってください');
+  else if (r === 'busy') toast('少し待ってからもう一度押してください');
+  else if (r === 'fail') toast('ファイル保存が使えませんでした。テキストで書き出してください');
+});
+
+/* ================= 機械の声 ================= */
+function jaVoices() { try { return speechSynthesis.getVoices().filter(v => /^ja/i.test(v.lang)); } catch (e) { return []; } }
+function pickVoice() {
+  const vs = jaVoices(); if (!vs.length) return null;
+  const want = (typeof prefs !== 'undefined' && prefs.voiceName) || '';
+  return vs.find(v => v.name === want) || vs[0];
+}
+function sayText(text, rate = 1) {
+  try {
+    if (!window.speechSynthesis) return false;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(String(text).replace(/[　\s]+/g, '、'));
+    u.lang = 'ja-JP'; u.rate = rate;
+    const v = pickVoice(); if (v) u.voice = v;
+    speechSynthesis.speak(u);
+    return true;
+  } catch (e) { return false; }
+}
+$('#btn-say').addEventListener('click', () => {
+  const f = readForm(), t = f.yomi || f.read;
+  if (!t) { toast('読み札の文を入れてください'); return; }
+  stopAudio();
+  if (!window.speechSynthesis) { toast('このブラウザには読み上げの機能がありません'); return; }
+  if (!jaVoices().length) toast('日本語の声が見つかりません。読み方が合っているかは文字で確認してください');
+  sayText(t, 1);
+});
+
+/* ================= 読み上げの声 ================= */
+let player = null, rec = null, recCancel = false;
+function stopAudio() { if (player) { try { player.pause(); } catch (e) {} player = null; } }
+function playAudio(url) { stopAudio(); try { player = new Audio(url); const p = player.play(); if (p) p.catch(() => {}); return player; } catch (e) { return null; } }
+function blobToAudioURL(blob, nameHint) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => {
+      let u = String(r.result);
+      if (!/^data:audio\//.test(u)) {
+        const ext = (/\.(\w+)$/.exec(nameHint || '') || [])[1] || 'webm';
+        const map = { mp3: 'mpeg', m4a: 'mp4', aac: 'aac', wav: 'wav', ogg: 'ogg', oga: 'ogg', opus: 'ogg', webm: 'webm', flac: 'flac' };
+        u = u.replace(/^data:[^,]*?;base64,/, `data:audio/${map[ext.toLowerCase()] || 'webm'};base64,`);
+      }
+      res(u);
+    };
+    r.onerror = () => rej(r.error); r.readAsDataURL(blob);
+  });
+}
+async function setAudioBlob(blob, name) {
+  if (blob.size > 4 * 1024 * 1024) { toast('音声が大きすぎます（4MBまで）。短くしてください'); return; }
+  try { currentAudio = await blobToAudioURL(blob, name); updatePreview(); toast('声をセットしました。「札を追加」で保存されます'); }
+  catch (e) { toast('音声を読み込めませんでした'); }
+}
+$('#f-audio').addEventListener('change', e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  if (f.type && !/^audio\//.test(f.type) && !/^video\/(webm|mp4)/.test(f.type)) { toast('音声ファイルを選んでください'); return; }
+  setAudioBlob(f, f.name);
+});
+$('#btn-play').addEventListener('click', () => { if (currentAudio) { const a = playAudio(currentAudio); if (a) a.onerror = () => toast('このブラウザではこの音声を再生できません'); } });
+$('#btn-noaudio').addEventListener('click', () => { currentAudio = ''; stopAudio(); updatePreview(); });
+$('#btn-rec').addEventListener('click', async () => {
+  const btn = $('#btn-rec');
+  if (rec) { rec.stop(); return; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { toast('このブラウザでは録音できません。音声ファイルを選んでください'); return; }
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch (e) { toast('マイクが使えませんでした。音声ファイルを選んでください'); return; }
+  const mime = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4', 'audio/webm'].find(m => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m));
+  const chunks = []; recCancel = false;
+  rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+  const t0 = Date.now();
+  const timer = setInterval(() => {
+    const sec = (Date.now() - t0) / 1000;
+    $('#rec-info').textContent = `録音中 ${Math.floor(sec)}秒（最長20秒・もう一度押すと止まります）`;
+    if (sec >= 20 && rec) rec.stop();
+  }, 200);
+  rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  rec.onstop = async () => {
+    clearInterval(timer); stream.getTracks().forEach(t => t.stop());
+    const type = (rec && rec.mimeType) || 'audio/webm';
+    rec = null; btn.classList.remove('on'); btn.textContent = '● 録音する';
+    if (recCancel || !chunks.length) { updatePreview(); return; }
+    await setAudioBlob(new Blob(chunks, { type: type.replace(/^video\//, 'audio/') }), 'rec.webm');
+  };
+  rec.start(); btn.classList.add('on'); btn.textContent = '■ 止める';
+});
+
+/* ================= PDF ================= */
+const A4W = 210, A4H = 297, CW = 58, CH = 80, GAP = 6, COLS = 3, ROWS = 3, PER = COLS * ROWS;
+const GX = (A4W - (COLS * CW + (COLS - 1) * GAP)) / 2, GY = 24;
+const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
+const SERIF = '"Kaisei Decol","Hiragino Mincho ProN","Yu Mincho",serif';
+const ROUND = '"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif';
+function pdfPages(d, o) {
+  const pages = [];
+  if (o.cover) pages.push({ kind: 'cover' });
+  const chunk = kind => { for (let i = 0; i < d.cards.length; i += PER) pages.push({ kind, cards: d.cards.slice(i, i + PER), no: i / PER + 1, of: Math.ceil(d.cards.length / PER) }); };
+  if (o.tori) chunk('tori');
+  if (o.yomi) chunk('yomi');
+  return pages;
+}
+function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function wrapLines(ctx, text, maxW, maxLines) {
+  const out = []; let line = '';
+  for (const ch of [...text]) {
+    if (ctx.measureText(line + ch).width > maxW && line) { out.push(line); line = ch.trim() ? ch : ''; if (out.length === maxLines) break; }
+    else line += ch;
+  }
+  if (out.length < maxLines && line) out.push(line);
+  const used = out.join('').length;
+  if (used < [...text].join('').replace(/^\s+/, '').length && out.length === maxLines) {
+    let l = out[maxLines - 1]; while (l && ctx.measureText(l + '…').width > maxW) l = l.slice(0, -1); out[maxLines - 1] = l + '…';
+  }
+  return out;
+}
+function cardFrame(ctx, k, x, y, w, h, cut) {
+  if (cut) { ctx.save(); ctx.setLineDash([1.6 * k, 1.2 * k]); ctx.strokeStyle = '#9a9a9a'; ctx.lineWidth = .25 * k; ctx.strokeRect((x - 1.5) * k, (y - 1.5) * k, (w + 3) * k, (h + 3) * k); ctx.restore(); }
+  rr(ctx, x * k, y * k, w * k, h * k, 2 * k); ctx.fillStyle = '#fffaf0'; ctx.fill();
+  ctx.lineWidth = .6 * k; ctx.strokeStyle = '#8b6b43'; ctx.stroke();
+  rr(ctx, (x + 1.6) * k, (y + 1.6) * k, (w - 3.2) * k, (h - 3.2) * k, 1.2 * k); ctx.lineWidth = .25 * k; ctx.strokeStyle = '#c9a978'; ctx.stroke();
+}
+function drawTori(ctx, k, c, x, y, w, h, imgs, cut) {
+  cardFrame(ctx, k, x, y, w, h, cut);
+  const R = w * .19, cx = x + 4 + R, cy = y + 4 + R;
+  ctx.beginPath(); ctx.arc(cx * k, cy * k, R * k, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill();
+  ctx.lineWidth = .6 * k; ctx.strokeStyle = '#b8322a'; ctx.stroke();
+  ctx.fillStyle = '#b8322a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = `700 ${R * 1.25 * k}px ${SERIF}`; ctx.fillText(c.head, cx * k, (cy + R * .05) * k);
+  const textH = 13, top = y + 4 + 2 * R + 2, bottom = y + h - 3 - textH, boxW = w - 10, boxH = bottom - top;
+  const im = c.img && imgs.get(c.img);
+  if (im) {
+    const sc = Math.min(boxW / im.width, boxH / im.height), iw = im.width * sc, ih = im.height * sc;
+    ctx.save(); ctx.globalCompositeOperation = 'multiply';
+    ctx.drawImage(im, (x + (w - iw) / 2) * k, (top + (boxH - ih) / 2) * k, iw * k, ih * k); ctx.restore();
+  } else if (c.emoji) {
+    const fs = Math.min(boxH, boxW) * .72; ctx.font = `${fs * k}px ${EMOJI_FONT}`; ctx.fillStyle = '#000';
+    ctx.fillText(c.emoji, (x + w / 2) * k, (top + boxH / 2) * k);
+  }
+  ctx.font = `500 ${3.1 * k}px ${ROUND}`; ctx.fillStyle = '#6d5c4a';
+  const lines = wrapLines(ctx, c.text || c.read, (w - 8) * k, 3);
+  const ly = y + h - 3.5 - textH + (textH - lines.length * 4.2) / 2 + 2.1;
+  lines.forEach((l, i) => ctx.fillText(l, (x + w / 2) * k, (ly + i * 4.2) * k));
+}
+const ROT = new Set([...'ー－―‐〜～…‥-─—「」『』（）()【】［］〔〕＜＞<>＝=']);
+const SMALL = new Set([...'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ']);
+const PUNC = new Set([...'、。，．,.']);
+const NOHEAD = new Set([...'、。，．,.）」』】〕］ーっゃゅょぁぃぅぇぉッャュョァィゥェォ！？!?…']);
+function drawYomi(ctx, k, c, deckName, x, y, w, h, cut) {
+  cardFrame(ctx, k, x, y, w, h, cut);
+  const segs = c.read.split(/[\s　]+/).filter(Boolean);
+  const availH = h - 16, availW = w - 10;
+  const longest = Math.max(...segs.map(sg => [...sg].length), 1);
+  let fs = Math.max(4.2, Math.min(7, availH / (longest * 1.08))), cols = [];
+  for (; fs >= 3; fs -= .25) {
+    const per = Math.max(1, Math.floor(availH / (fs * 1.08)));
+    cols = []; segs.forEach(sg => {
+      const a = [...sg];
+      for (let i = 0; i < a.length;) {
+        let e = i + per;
+        if (e < a.length && NOHEAD.has(a[e])) e++; // 行頭に来てはいけない文字はぶら下げる
+        cols.push(a.slice(i, e)); i = e;
+      }
+    });
+    if (cols.length * fs * 1.45 <= availW) break;
+  }
+  const colW = fs * 1.45, total = cols.length * colW;
+  let colX = x + w / 2 + total / 2 - colW / 2;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = `700 ${fs * k}px ${SERIF}`;
+  let first = true;
+  cols.forEach(col => {
+    col.forEach((ch, i) => {
+      const cy = y + 7 + fs / 2 + i * fs * 1.08;
+      ctx.fillStyle = first ? '#b8322a' : '#2b2118'; first = false;
+      if (ROT.has(ch)) { ctx.save(); ctx.translate(colX * k, cy * k); ctx.rotate(Math.PI / 2); ctx.fillText(ch, 0, 0); ctx.restore(); }
+      else if (PUNC.has(ch)) ctx.fillText(ch, (colX + fs * .55) * k, (cy - fs * .5) * k);
+      else if (SMALL.has(ch)) ctx.fillText(ch, (colX + fs * .1) * k, (cy - fs * .1) * k);
+      else ctx.fillText(ch, colX * k, cy * k);
+    });
+    colX -= colW;
+  });
+  ctx.font = `500 ${2.4 * k}px ${ROUND}`; ctx.fillStyle = '#a08f7a';
+  ctx.fillText(deckName.length > 22 ? deckName.slice(0, 21) + '…' : deckName, (x + w / 2) * k, (y + h - 4.5) * k);
+}
+function drawCover(ctx, k, d, o) {
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#b8322a'; ctx.beginPath(); ctx.arc(105 * k, 38 * k, 9 * k, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.font = `700 ${11 * k}px ${SERIF}`; ctx.textBaseline = 'middle'; ctx.fillText('混', 105 * k, 38.5 * k);
+  ctx.fillStyle = '#8a7a66'; ctx.font = `700 ${3.6 * k}px ${ROUND}`; ctx.fillText('混具なカルタ  -Magna Carta-', 105 * k, 22 * k);
+  ctx.textBaseline = 'alphabetic'; ctx.fillStyle = '#2b2118';
+  let fs = 13; ctx.font = `700 ${fs * k}px ${SERIF}`;
+  while (ctx.measureText(d.name).width > 180 * k && fs > 6) { fs -= .5; ctx.font = `700 ${fs * k}px ${SERIF}`; }
+  ctx.fillText(d.name, 105 * k, 66 * k);
+  ctx.font = `500 ${4.5 * k}px ${ROUND}`; ctx.fillStyle = '#6d5c4a';
+  ctx.fillText(`${d.author ? '作った人：' + d.author + '　／　' : ''}札 ${d.cards.length}枚　／　${new Date().toLocaleDateString('ja-JP')}`, 105 * k, 78 * k);
+  ctx.font = `500 ${3.4 * k}px ${ROUND}`;
+  const notes = ['点線にそって切り取ってください。'];
+  if (o.embed) {
+    const na = d.cards.filter(c => c.audio).length;
+    notes.push('このPDFにはデッキのデータが入っています。「混具なカルタ」の「ファイルを読み込む」で', `このPDFを選ぶと、デッキとして読み込めます。${na ? `（読み上げの声 ${na}枚分も入っています）` : ''}`);
+  }
+  notes.forEach((t, i) => ctx.fillText(t, 105 * k, (88 + i * 5) * k));
+  // 一覧
+  ctx.strokeStyle = '#d6c7a6'; ctx.lineWidth = .3 * k; ctx.beginPath(); ctx.moveTo(20 * k, 108 * k); ctx.lineTo(190 * k, 108 * k); ctx.stroke();
+  ctx.textAlign = 'left';
+  const n = d.cards.length, perCol = 34, colsN = n > perCol ? 2 : 1, lh = Math.min(5, 170 / Math.min(perCol, Math.ceil(n / colsN)));
+  const colWmm = colsN === 2 ? 82 : 160, x0 = colsN === 2 ? 22 : 30;
+  d.cards.slice(0, perCol * 2).forEach((c, i) => {
+    const col = Math.floor(i / perCol), row = i % perCol, xx = x0 + col * 88, yy = 116 + row * lh;
+    ctx.fillStyle = '#b8322a'; ctx.font = `700 ${3.6 * k}px ${SERIF}`; ctx.fillText(c.head, xx * k, yy * k);
+    ctx.fillStyle = '#2b2118'; ctx.font = `500 ${3.1 * k}px ${ROUND}`;
+    let t = c.read; while (ctx.measureText(t).width > (colWmm - 8) * k && t.length > 1) t = t.slice(0, -2) + '…';
+    ctx.fillText(t, (xx + 6) * k, yy * k);
+  });
+  if (n > perCol * 2) { ctx.fillStyle = '#6d5c4a'; ctx.fillText(`ほか ${n - perCol * 2}枚`, x0 * k, (116 + perCol * lh) * k); }
+}
+function renderPage(ctx, k, pg, d, o, imgs) {
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, A4W * k, A4H * k);
+  if (pg.kind === 'cover') return drawCover(ctx, k, d, o);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; ctx.fillStyle = '#8a7a66'; ctx.font = `500 ${3.4 * k}px ${ROUND}`;
+  ctx.fillText(`${d.name}　${pg.kind === 'tori' ? '取り札' : '読み札'}（${pg.no}/${pg.of}）`, GX * k, 15 * k);
+  pg.cards.forEach((c, i) => {
+    const col = i % COLS, row = Math.floor(i / COLS);
+    const x = GX + col * (CW + GAP), y = GY + row * (CH + GAP);
+    if (pg.kind === 'tori') drawTori(ctx, k, c, x, y, CW, CH, imgs, o.cut);
+    else drawYomi(ctx, k, c, d.name, x, y, CW, CH, o.cut);
+  });
+}
+async function loadImgs(cards) {
+  const m = new Map();
+  await Promise.all(cards.filter(c => c.img).map(c => new Promise(res => { const im = new Image(); im.onload = () => { m.set(c.img, im); res(); }; im.onerror = res; im.src = c.img; })));
+  return m;
+}
+async function fontsReady() {
+  try { await Promise.race([Promise.all([document.fonts.load(`700 40px "Kaisei Decol"`, 'かるた'), document.fonts.load(`500 40px "Zen Maru Gothic"`, 'かるた')]), new Promise(r => setTimeout(r, 2500))]); } catch (e) {}
+}
+const pdfOpts = () => ({ tori: $('#p-tori').checked, yomi: $('#p-yomi').checked, cover: $('#p-cover').checked, cut: $('#p-cut').checked, embed: $('#p-embed').checked });
+async function updatePdfPreview() {
+  const d = cur(), o = pdfOpts(), pages = pdfPages(d, o);
+  const tc = pages.filter(p => p.kind === 'tori').length, yc = pages.filter(p => p.kind === 'yomi').length;
+  $('#pdf-info').textContent = pages.length ? `A4・全${pages.length}ページ（${[o.cover ? '表紙1' : '', tc ? '取り札' + tc : '', yc ? '読み札' + yc : ''].filter(Boolean).join('・')}）　1ページに${PER}枚、札の大きさは${CW}×${CH}mmです。` : '入れるものを選んでください';
+  $('#pdf-go').disabled = !pages.length;
+  const cv = $('#pdf-prev'), ctx = cv.getContext('2d'), k = cv.width / A4W;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height);
+  const pg = pages.find(p => p.kind !== 'cover') || pages[0];
+  if (!pg) return;
+  const imgs = await loadImgs(pg.cards || []);
+  await fontsReady();
+  renderPage(ctx, k, pg, d, o, imgs);
+}
+function openPdf() {
+  save(false); const d = cur();
+  if (!d.cards.length) { toast('このデッキには札がありません'); return; }
+  $('#pdf-deck').textContent = `デッキ「${d.name}」（${d.cards.length}枚）`;
+  $('#pdf-prog').hidden = true; $('#pdf-go').disabled = false;
+  $('#ov-pdf').hidden = false; updatePdfPreview();
+}
+['#p-tori', '#p-yomi', '#p-cover', '#p-cut', '#p-embed'].forEach(id => $(id).addEventListener('change', updatePdfPreview));
+$('#btn-pdf').addEventListener('click', openPdf);
+$('#btn-pdf2').addEventListener('click', openPdf);
+$('#pdf-no').addEventListener('click', () => { $('#ov-pdf').hidden = true; });
+
+const latin1 = s => { const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i) & 255; return u; };
+async function zip(u8, mode) {
+  const S = mode === 'in' ? window.DecompressionStream : window.CompressionStream;
+  if (!S) return null;
+  const st = new Blob([u8]).stream().pipeThrough(new S('deflate'));
+  return new Uint8Array(await new Response(st).arrayBuffer());
+}
+function utf16hex(s) { let h = 'FEFF'; for (let i = 0; i < s.length; i++) h += s.charCodeAt(i).toString(16).padStart(4, '0').toUpperCase(); return `<${h}>`; }
+function buildPdf(pages, attach, title) {
+  const W = 595.28, H = 841.89, chunks = [], offs = []; let len = 0;
+  const push = u => { chunks.push(u); len += u.length; };
+  const obj = (n, dict, stream) => { offs[n] = len; push(latin1(`${n} 0 obj\n${dict}\n`)); if (stream) { push(latin1('stream\n')); push(stream); push(latin1('\nendstream\n')); } push(latin1('endobj\n')); };
+  push(latin1('%PDF-1.7\n%\xE2\xE3\xCF\xD3\n'));
+  let n = 6; const po = pages.map(() => { const o = { page: n, cont: n + 1, img: n + 2 }; n += 3; return o; });
+  obj(1, `<< /Type /Catalog /Pages 2 0 R${attach ? ' /Names << /EmbeddedFiles << /Names [(karuta-deck.json) 3 0 R] >> >>' : ''} >>`);
+  obj(2, `<< /Type /Pages /Kids [${po.map(o => o.page + ' 0 R').join(' ')}] /Count ${pages.length} >>`);
+  if (attach) {
+    obj(3, `<< /Type /Filespec /F (karuta-deck.json) /UF (karuta-deck.json) /Desc (Tezukuri Karuta deck data) /EF << /F 4 0 R >> >>`);
+    obj(4, `<< /Type /EmbeddedFile /Subtype /application#2Fjson /KarutaDeck true${attach.z ? ' /Filter /FlateDecode' : ''} /Length ${attach.bytes.length} >>`, attach.bytes);
+  } else { obj(3, '<< >>'); obj(4, '<< >>'); }
+  obj(5, `<< /Title ${utf16hex(title)} /Creator (Magna Carta - Konguna Karuta) >>`);
+  pages.forEach((p, i) => {
+    const o = po[i], cs = latin1(`q ${W} 0 0 ${H} 0 0 cm /Im0 Do Q`);
+    obj(o.page, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im0 ${o.img} 0 R >> >> /Contents ${o.cont} 0 R >>`);
+    obj(o.cont, `<< /Length ${cs.length} >>`, cs);
+    obj(o.img, `<< /Type /XObject /Subtype /Image /Width ${p.w} /Height ${p.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpeg.length} >>`, p.jpeg);
+  });
+  const xref = len;
+  let x = `xref\n0 ${n}\n0000000000 65535 f \n`;
+  for (let i = 1; i < n; i++) x += String(offs[i]).padStart(10, '0') + ' 00000 n \n';
+  push(latin1(x + `trailer\n<< /Size ${n} /Root 1 0 R /Info 5 0 R >>\nstartxref\n${xref}\n%%EOF\n`));
+  return new Blob(chunks, { type: 'application/pdf' });
+}
+$('#pdf-go').addEventListener('click', async () => {
+  const d = cur(), o = pdfOpts(), pages = pdfPages(d, o);
+  if (!pages.length) return;
+  const btn = $('#pdf-go'), bar = $('#pdf-prog'), fill = bar.querySelector('i');
+  btn.disabled = true; btn.textContent = 'PDFを作っています…'; bar.hidden = false; fill.style.width = '0';
+  try {
+    await fontsReady();
+    const imgs = await loadImgs(d.cards);
+    const DPI = 200, k = DPI / 25.4, cv = document.createElement('canvas');
+    cv.width = Math.round(A4W * k); cv.height = Math.round(A4H * k);
+    const ctx = cv.getContext('2d'), out = [];
+    for (let i = 0; i < pages.length; i++) {
+      renderPage(ctx, k, pages[i], d, o, imgs);
+      const blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', .9));
+      out.push({ jpeg: new Uint8Array(await blob.arrayBuffer()), w: cv.width, h: cv.height });
+      fill.style.width = Math.round((i + 1) / pages.length * 90) + '%';
+      await new Promise(r => setTimeout(r, 0));
+    }
+    let attach = null;
+    if (o.embed) {
+      const raw = new TextEncoder().encode(JSON.stringify(deckPayload(d)));
+      const z = await zip(raw, 'out');
+      attach = z ? { bytes: z, z: true } : { bytes: raw, z: false };
+    }
+    const pdf = buildPdf(out, attach, d.name);
+    fill.style.width = '100%';
+    const r = await saveFile(`${safeName(d.name)}.pdf`, pdf, 'application/pdf');
+    if (r === 'saved') { toast('PDFを保存しました'); $('#ov-pdf').hidden = true; }
+    else if (r === 'busy') toast('少し待ってからもう一度押してください');
+    else if (r === 'fail') toast('PDFを保存できませんでした');
+  } catch (e) { console.error(e); toast('PDFを作れませんでした'); }
+  btn.disabled = false; btn.textContent = 'PDFを作って保存'; bar.hidden = true;
+});
+
+async function importPdf(buf, fallbackName) {
+  const u8 = new Uint8Array(buf);
+  let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  const m = /\/KarutaDeck true(.{0,60}?)\/Length (\d+)/s.exec(s);
+  if (!m) { toast('このPDFにはデッキのデータが入っていませんでした'); return; }
+  let st = s.indexOf('stream', m.index) + 6;
+  if (s[st] === '\r') st++; if (s[st] === '\n') st++;
+  let data = u8.subarray(st, st + +m[2]);
+  try {
+    if (/FlateDecode/.test(m[1])) { data = await zip(data, 'in'); if (!data) throw 0; }
+    importText(new TextDecoder().decode(data), fallbackName);
+  } catch (e) { toast('PDFの中のデータが読めませんでした'); }
+}
+
+/* ================= 絵を描く ================= */
+const cv = $('#cv'), cx = cv.getContext('2d');
+const CV = 480, OUT = 260;
+const COLORS = ['#2b2118','#ffffff','#b8322a','#e67e22','#f1c40f','#3e7a4a','#7ec850','#3498db','#2c3e6b','#8e44ad','#f39ac0','#8b5a2b','#95a5a6'];
+const pen = { color: '#2b2118', size: 10, erase: false };
+let hist = [], drawing = false, last = null;
+
+$('#palette').innerHTML = COLORS.map(c => `<button type="button" data-color="${c}" style="background:${c}" aria-label="${c}"></button>`).join('') +
+  '<input type="color" id="d-color" value="#ff6b6b" title="好きな色">';
+function setColor(c) {
+  pen.color = c; pen.erase = false; $('#d-erase').classList.remove('on');
+  document.querySelectorAll('#palette button').forEach(b => b.classList.toggle('on', b.dataset.color === c));
+}
+setColor(pen.color);
+$('#palette').addEventListener('click', e => { const b = e.target.closest('button[data-color]'); if (b) setColor(b.dataset.color); });
+$('#d-color').addEventListener('input', e => setColor(e.target.value));
+document.querySelectorAll('.draw-tools [data-size]').forEach(b => b.addEventListener('click', () => {
+  pen.size = +b.dataset.size;
+  document.querySelectorAll('.draw-tools [data-size]').forEach(x => x.classList.toggle('on', x === b));
+}));
+$('#d-erase').addEventListener('click', () => { pen.erase = !pen.erase; $('#d-erase').classList.toggle('on', pen.erase); });
+
+function cvWhite() { cx.save(); cx.globalCompositeOperation = 'source-over'; cx.fillStyle = '#fff'; cx.fillRect(0, 0, CV, CV); cx.restore(); }
+function snap() { try { hist.push(cx.getImageData(0, 0, CV, CV)); if (hist.length > 30) hist.shift(); } catch (e) {} }
+function drawContain(im) {
+  const k = Math.min(CV / im.width, CV / im.height);
+  const w = im.width * k, h = im.height * k;
+  cx.drawImage(im, (CV - w) / 2, (CV - h) / 2, w, h);
+}
+function openDraw(src) {
+  cvWhite(); hist = [];
+  if (src) { const im = new Image(); im.onload = () => drawContain(im); im.src = src; }
+  $('#ov-draw').hidden = false;
+}
+function loadFile(file) {
+  if (!file || !/^image\//.test(file.type)) { toast('画像ファイルを選んでください'); return; }
+  const url = URL.createObjectURL(file);
+  const im = new Image();
+  im.onload = () => {
+    if ($('#ov-draw').hidden) { cvWhite(); hist = []; $('#ov-draw').hidden = false; }
+    else snap();
+    cvWhite(); drawContain(im); URL.revokeObjectURL(url);
+    toast('画像を読み込みました。上から描き足せます');
+  };
+  im.onerror = () => { URL.revokeObjectURL(url); toast('この画像は読み込めませんでした'); };
+  im.src = url;
+}
+function pos(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * CV / r.width, y: (e.clientY - r.top) * CV / r.height }; }
+function stroke(a, b) {
+  cx.strokeStyle = cx.fillStyle = pen.erase ? '#ffffff' : pen.color;
+  cx.lineWidth = pen.size * (pen.erase ? 2 : 1); cx.lineCap = cx.lineJoin = 'round';
+  if (a.x === b.x && a.y === b.y) { cx.beginPath(); cx.arc(a.x, a.y, cx.lineWidth / 2, 0, Math.PI * 2); cx.fill(); }
+  else { cx.beginPath(); cx.moveTo(a.x, a.y); cx.lineTo(b.x, b.y); cx.stroke(); }
+}
+cv.addEventListener('pointerdown', e => {
+  e.preventDefault(); snap(); drawing = true; last = pos(e);
+  try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+  stroke(last, last);
+});
+cv.addEventListener('pointermove', e => { if (!drawing) return; const p = pos(e); stroke(last, p); last = p; });
+['pointerup', 'pointercancel', 'pointerleave'].forEach(t => cv.addEventListener(t, () => { drawing = false; }));
+$('#d-undo').addEventListener('click', () => { const h = hist.pop(); if (h) cx.putImageData(h, 0, 0); });
+$('#d-clear').addEventListener('click', () => { snap(); cvWhite(); });
+$('#d-fill').addEventListener('click', () => {
+  // 白いところだけを今の色でぬる（描いた線は残す）
+  snap();
+  const img = cx.getImageData(0, 0, CV, CV), d = img.data;
+  const hex = pen.erase ? '#ffffff' : pen.color;
+  const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+  for (let i = 0; i < d.length; i += 4) if (d[i] > 245 && d[i + 1] > 245 && d[i + 2] > 245) { d[i] = r; d[i + 1] = g; d[i + 2] = b; }
+  cx.putImageData(img, 0, 0);
+});
+$('#d-file').addEventListener('change', e => { loadFile(e.target.files[0]); e.target.value = ''; });
+$('#f-file').addEventListener('change', e => { loadFile(e.target.files[0]); e.target.value = ''; });
+$('#btn-draw').addEventListener('click', () => openDraw(currentImg));
+$('#btn-noimg').addEventListener('click', () => { currentImg = ''; updatePreview(); });
+$('#d-cancel').addEventListener('click', () => { $('#ov-draw').hidden = true; });
+$('#d-ok').addEventListener('click', () => {
+  const o = document.createElement('canvas'); o.width = o.height = OUT;
+  const ox = o.getContext('2d'); ox.imageSmoothingQuality = 'high'; ox.drawImage(cv, 0, 0, OUT, OUT);
+  currentImg = o.toDataURL('image/jpeg', 0.85);
+  $('#ov-draw').hidden = true; updatePreview();
+  toast('絵をセットしました。「札を追加」で保存されます');
+});
+
+/* ================= 音（効果音・BGM）================= */
+const PREF_KEY = 'magna-carta-sound';
+const prefs = (() => { try { return Object.assign({ bgm: 'builtin', se: true, vol: 70, muted: false }, JSON.parse(localStorage.getItem(PREF_KEY) || '{}')); } catch (e) { return { bgm: 'builtin', se: true, vol: 70, muted: false }; } })();
+const savePrefs = () => { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch (e) {} };
+let AC = null, master, seBus, bgmBus, noiseBuf, echo;
+function audio() {
+  if (AC) { if (AC.state === 'suspended') AC.resume().catch(() => {}); return AC; }
+  try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+  master = AC.createGain(); master.connect(AC.destination);
+  seBus = AC.createGain(); seBus.connect(master);
+  bgmBus = AC.createGain(); bgmBus.gain.value = .5; bgmBus.connect(master);
+  // 短い残響（パァン の「ァン」）
+  echo = AC.createDelay(); echo.delayTime.value = .075;
+  const fb = AC.createGain(); fb.gain.value = .32; const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600;
+  echo.connect(lp); lp.connect(fb); fb.connect(echo); lp.connect(seBus);
+  noiseBuf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
+  const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  applyVol();
+  return AC;
+}
+function applyVol() { if (master) master.gain.setTargetAtTime(prefs.muted ? 0 : (prefs.vol / 100) ** 1.5, AC.currentTime, .03); if (ownBgm) ownBgm.volume = prefs.muted ? 0 : (prefs.vol / 100) * (ducked ? .3 : .6); }
+function noise(t, dur, { type = 'bandpass', f = 2000, q = 1, gain = 1, attack = .002, to = seBus, send = 0 } = {}) {
+  const src = AC.createBufferSource(); src.buffer = noiseBuf; src.playbackRate.value = .8 + Math.random() * .4;
+  const flt = AC.createBiquadFilter(); flt.type = type; flt.frequency.value = f; flt.Q.value = q;
+  const g = AC.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + attack); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  src.connect(flt); flt.connect(g); g.connect(to);
+  if (send) { const sg = AC.createGain(); sg.gain.value = send; g.connect(sg); sg.connect(echo); }
+  src.start(t, Math.random()); src.stop(t + dur + .05);
+}
+function tone(t, freq, dur, { type = 'sine', gain = .5, to = seBus, slideTo = 0, attack = .005 } = {}) {
+  const o = AC.createOscillator(); o.type = type; o.frequency.setValueAtTime(freq, t);
+  if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+  const g = AC.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + attack); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g); g.connect(to); o.start(t); o.stop(t + dur + .05);
+}
+const SE = {
+  pan(strong = 1) { // 札をはじく「パァン！」
+    if (!prefs.se || !audio()) return; const t = AC.currentTime + .005;
+    noise(t, .2, { f: 2400, q: .7, gain: 1.2 * strong, attack: .0015, send: .9 });
+    noise(t, .05, { type: 'highpass', f: 5000, q: .5, gain: .7 * strong, attack: .001 });
+    tone(t, 190, .13, { gain: .9 * strong, slideTo: 55 });
+  },
+  boo() { if (!prefs.se || !audio()) return; const t = AC.currentTime; tone(t, 150, .32, { type: 'square', gain: .16, slideTo: 95 }); tone(t, 156, .32, { type: 'sawtooth', gain: .09, slideTo: 98 }); },
+  kara() { if (!prefs.se || !audio()) return; const t = AC.currentTime; tone(t, 660, .25, { type: 'triangle', gain: .2 }); tone(t + .12, 520, .35, { type: 'triangle', gain: .18 }); },
+  pata(side) { if (!prefs.se || !audio()) return; const t = AC.currentTime; noise(t, .07, { f: side ? 1300 : 1000, q: 1.4, gain: .45, attack: .002 }); tone(t, 120, .06, { gain: .25, slideTo: 70 }); },
+  roll(dur = 1.3) {
+    if (!prefs.se || !audio()) return; const t = AC.currentTime;
+    for (let i = 0, n = Math.floor(dur * 22); i < n; i++) noise(t + i / 22, .06, { f: 1800, q: .9, gain: .12 + .5 * i / n, attack: .003 });
+    tone(t, 70, dur, { gain: .25 });
+  },
+  crash(t0) { const t = t0 || AC.currentTime; noise(t, 1.4, { type: 'highpass', f: 4500, q: .3, gain: .5, attack: .003 }); tone(t, 90, .4, { gain: .8, slideTo: 45 }); },
+  fanfare(win) {
+    if (!prefs.se || !audio()) return; const t = AC.currentTime;
+    if (win === 1) {
+      SE.crash(t);
+      [[72, 0], [76, .14], [79, .28], [84, .42], [79, .62], [84, .76]].forEach(([m, dt], i) => { const f = 440 * 2 ** ((m - 69) / 12), d = i === 5 ? 1.2 : .3; tone(t + dt, f, d, { type: 'square', gain: .1 }); tone(t + dt, f, d, { type: 'triangle', gain: .25 }); });
+    } else if (win === -1) {
+      [[67, 0], [66, .35], [65, .7], [64, 1.05]].forEach(([m, dt], i) => tone(t + dt, 440 * 2 ** ((m - 69) / 12), i === 3 ? 1.1 : .32, { type: 'triangle', gain: .25 }));
+    } else {
+      SE.crash(t); [[72, 0], [72, .25], [79, .5]].forEach(([m, dt]) => tone(t + dt, 440 * 2 ** ((m - 69) / 12), .4, { type: 'triangle', gain: .25 }));
+    }
+  },
+};
+
+/* BGM：和風（都節音階の琴っぽい音）をその場で作曲・演奏 */
+const MEL = [
+  [69, 0, 71, 72, 71, 0, 69, 0], [65, 0, 64, 0, 0, 0, 0, 0], [69, 0, 72, 76, 77, 0, 76, 0], [72, 0, 71, 0, 69, 0, 0, 0],
+  [76, 0, 77, 76, 72, 0, 71, 0], [72, 71, 69, 0, 65, 0, 64, 0], [64, 65, 69, 71, 72, 0, 71, 69], [71, 0, 0, 0, 64, 0, 0, 0],
+];
+const BASS = [45, 41, 45, 40, 45, 41, 40, 40];
+let bgmHeat = 0, bgmBpm = 84; // 0=序盤 … 1=最後の1枚
+let bgmOn = false, bgmStep = 0, bgmNext = 0, bgmTimer = null, ownBgm = null, ownBgmURL = null, ducked = false;
+const mtof = m => 440 * 2 ** ((m - 69) / 12);
+function koto(t, m, gain = .22) {
+  const f = mtof(m);
+  tone(t, f, 1.6, { type: 'triangle', gain, to: bgmBus, attack: .004 });
+  tone(t, f * 2, .5, { type: 'sine', gain: gain * .35, to: bgmBus, attack: .002 });
+  tone(t, f * 3.01, .18, { type: 'sine', gain: gain * .18, to: bgmBus, attack: .001 });
+}
+function taiko(t, g = .35, f = 62) { tone(t, f, .35, { gain: g, to: bgmBus, slideTo: 40 }); noise(t, .06, { f: 300, q: 1, gain: g * .25, to: bgmBus }); }
+function setBgmHeat(h) {
+  bgmHeat = Math.max(0, Math.min(1, h));
+  // 前半はゆったり、後半に向けて加速（84 → 最大132 BPM）
+  const x = Math.max(0, (bgmHeat - .35) / .65);
+  bgmBpm = 84 + 48 * x * x * (3 - 2 * x);
+}
+function bgmTick() {
+  let cur = bgmBpm;
+  while (bgmNext < AC.currentTime + .25) {
+    const spb = 60 / cur / 2; // 8分音符
+    const bar = Math.floor(bgmStep / 8) % MEL.length, i = bgmStep % 8, t = bgmNext, h = bgmHeat;
+    const m = MEL[bar][i];
+    if (m) koto(t, m, .2 + (Math.random() * .04));
+    if (i === 0) { koto(t, BASS[bar], .2); koto(t + .02, BASS[bar] + 7, .1); taiko(t, .35 + .15 * h); }
+    if (i === 4 && bar % 2 === 1) noise(t, .05, { f: 2600, q: 6, gain: .12, to: bgmBus }); // 拍子木
+    if (i === 6 && bar === 7) taiko(t, .25);
+    // ── 中盤から：裏拍の太鼓と拍子木
+    if (h > .35 && i === 4) taiko(t, .22 + .2 * h, 70);
+    if (h > .5 && (i === 2 || i === 6)) noise(t, .04, { f: 2600, q: 6, gain: .07 + .08 * h, to: bgmBus });
+    // ── 終盤：刻み（8分）とベースの連打
+    if (h > .7) noise(t, .03, { type: 'highpass', f: 6000, q: .5, gain: .04 + .07 * h * (i % 2 ? .6 : 1), to: bgmBus });
+    if (h > .7 && i % 2 === 1) koto(t, BASS[bar], .09 + .06 * h);
+    // ── 最後の数枚：小節の終わりに太鼓の連打
+    if (h > .85 && i === 7) { taiko(t, .3, 66); taiko(t + spb / 2, .38, 60); }
+    bgmStep++; bgmNext += spb;
+  }
+}
+function bgmStart() {
+  bgmStop();
+  if (prefs.bgm === 'off') return;
+  if (prefs.bgm === 'own') {
+    if (!ownBgmURL) return;
+    ownBgm = new Audio(ownBgmURL); ownBgm.loop = true; ducked = false; applyVol();
+    const p = ownBgm.play(); if (p) p.catch(() => {});
+    return;
+  }
+  if (!audio()) return;
+  bgmOn = true; bgmStep = 0; bgmNext = AC.currentTime + .1; ducked = false; setBgmHeat(0);
+  bgmBus.gain.cancelScheduledValues(AC.currentTime); bgmBus.gain.setValueAtTime(.5, AC.currentTime);
+  bgmTimer = setInterval(bgmTick, 80); bgmTick();
+}
+function bgmStop(fade) {
+  if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
+  if (bgmOn && AC && fade) { bgmBus.gain.setTargetAtTime(0, AC.currentTime, .4); }
+  bgmOn = false;
+  if (ownBgm) { const a = ownBgm; ownBgm = null; if (fade) { let v = a.volume; const iv = setInterval(() => { v -= .05; if (v <= 0) { clearInterval(iv); a.pause(); } else a.volume = v; }, 60); } else a.pause(); }
+}
+function bgmDuck(on) {
+  ducked = on;
+  if (bgmOn && AC) bgmBus.gain.setTargetAtTime(on ? .14 : .5, AC.currentTime, .15);
+  if (ownBgm) { try { ownBgm.preservesPitch = false; ownBgm.playbackRate = bgmBpm / 84; } catch (e) {} }
+  applyVol();
+}
+// 自分の曲（ブラウザの中に保存）
+async function loadOwnBgm() {
+  try {
+    const v = await idbGet('bgm');
+    if (v && v.blob) { if (ownBgmURL) URL.revokeObjectURL(ownBgmURL); ownBgmURL = URL.createObjectURL(v.blob); $('#bgm-name').textContent = v.name; }
+  } catch (e) {}
+}
+function renderSound() {
+  $('#s-bgm').value = prefs.bgm; $('#s-se').checked = prefs.se; $('#s-vol').value = prefs.vol;
+  $('#bgm-pick').hidden = prefs.bgm !== 'own';
+  if (prefs.bgm !== 'own') $('#bgm-name').textContent = ''; else if (!ownBgmURL) $('#bgm-name').textContent = '曲が選ばれていません';
+  $('#btn-mute').textContent = prefs.muted ? '🔇' : '🔊';
+}
+$('#s-bgm').addEventListener('change', e => { prefs.bgm = e.target.value; savePrefs(); renderSound(); if (prefs.bgm === 'own') loadOwnBgm().then(renderSound); });
+$('#s-se').addEventListener('change', e => { prefs.se = e.target.checked; savePrefs(); });
+$('#s-vol').addEventListener('input', e => { prefs.vol = +e.target.value; savePrefs(); applyVol(); });
+$('#btn-testse').addEventListener('click', () => { const se = prefs.se; prefs.se = true; SE.pan(); prefs.se = se; });
+$('#f-bgm').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try { await idbSet('bgm', { name: f.name, blob: f }); } catch (err) { toast('曲を保存できませんでした（今回だけ使います）'); }
+  if (ownBgmURL) URL.revokeObjectURL(ownBgmURL); ownBgmURL = URL.createObjectURL(f);
+  $('#bgm-name').textContent = f.name; toast('BGMをセットしました');
+});
+function fillVoices() {
+  const sel = $('#s-voicename'); if (!sel) return;
+  const vs = jaVoices();
+  sel.innerHTML = '<option value="">おまかせ</option>' + vs.map(v => `<option value="${esc(v.name)}">${esc(v.name)}</option>`).join('');
+  sel.value = vs.some(v => v.name === prefs.voiceName) ? prefs.voiceName : '';
+  sel.disabled = !vs.length;
+  if (!vs.length) sel.innerHTML = '<option value="">日本語の声が見つかりません</option>';
+}
+try { fillVoices(); speechSynthesis.addEventListener('voiceschanged', fillVoices); } catch (e) {}
+$('#s-voicename').addEventListener('change', e => { prefs.voiceName = e.target.value; savePrefs(); });
+$('#btn-voicetest').addEventListener('click', () => { if (!sayText('かるたを、はじめます', SPEEDS[$('#s-speed').value].rate)) toast('このブラウザには読み上げの機能がありません'); });
+$('#btn-mute').addEventListener('click', () => { prefs.muted = !prefs.muted; savePrefs(); renderSound(); audio(); applyVol(); });
+setTimeout(() => { loadOwnBgm().then(renderSound); }, 300);
+renderSound();
+
+/* ================= プレイモード ================= */
+const LEVELS = {
+  weak:   { name: 'よわい', min: 3400, max: 6000, miss: .15 },
+  normal: { name: 'ふつう', min: 2000, max: 3700, miss: .08 },
+  strong: { name: 'つよい', min: 1100, max: 2200, miss: .04 },
+  master: { name: '名人',   min: 600,  max: 1300, miss: .02 },
+};
+const SPEEDS = { slow: { ms: 240, rate: .8 }, normal: { ms: 160, rate: 1 }, fast: { ms: 105, rate: 1.3 } };
+let G = null;
+let lastCount = null;
+
+let picked = null; // あそぶデッキの選択
+function pickedDecks() {
+  if (!picked) picked = new Set([ALL.active]);
+  for (const id of [...picked]) if (!ALL.decks.some(d => d.id === id)) picked.delete(id);
+  return ALL.decks.filter(d => picked.has(d.id));
+}
+function buildPool() {
+  const pool = [];
+  pickedDecks().forEach(d => d.cards.forEach(c => pool.push({ card: c, src: d })));
+  const groups = {};
+  pool.forEach(p => { const k = readKey(p.card); (groups[k] = groups[k] || []).push(p); });
+  const dupGroups = Object.values(groups).filter(g => g.length > 1);
+  const useOne = $('#s-dup').value === 'one';
+  const finalPool = useOne ? Object.values(groups).map(g => g[Math.floor(Math.random() * g.length)]) : pool;
+  return { pool: finalPool, raw: pool.length, dupGroups, decks: pickedDecks() };
+}
+function renderSetup() {
+  const decksSel = pickedDecks();
+  $('#s-decks').innerHTML = ALL.decks.map(d => `
+    <label class="${picked.has(d.id) ? 'on' : ''}"><input type="checkbox" data-id="${d.id}" ${picked.has(d.id) ? 'checked' : ''}>
+      <span class="nm">${esc(d.name)}</span><span class="ct">${d.author ? esc(d.author) + '・' : ''}${d.cards.length}枚</span></label>`).join('');
+  const P = buildPool();
+  const nabe = decksSel.length >= 2;
+  $('#nabe-info').hidden = !nabe;
+  if (nabe) {
+    const dupCards = P.dupGroups.reduce((a, g) => a + g.length, 0);
+    $('#nabe-info').innerHTML = `<b>🍲 闇鍋モード</b>　${decksSel.length}つのデッキ・合計${P.raw}枚をまぜます。` +
+      (P.dupGroups.length ? `<br>同じ読み札が <b>${P.dupGroups.length}種類</b>（計${dupCards}枚）あります。` : '<br>同じ読み札はありません。') +
+      '<br>札を取ると、だれのデッキの札だったか出ます。';
+  }
+  $('#dup-wrap').hidden = !P.dupGroups.length;
+  const sel = $('#s-count');
+  const n = P.pool.length;
+  const prev = +sel.value || lastCount || 10;
+  const opts = [4, 6, 8, 10, 12, 16, 20, 30, 50, 80].filter(x => x < n);
+  if (n >= 2) opts.push(n);
+  sel.innerHTML = opts.map(x => `<option value="${x}">${x === n ? `全部（${x}枚）` : x + '枚'}</option>`).join('');
+  const best = opts.includes(prev) ? prev : (opts.filter(x => x <= prev).pop() ?? opts[0]);
+  if (best) sel.value = best;
+  $('#btn-start').disabled = n < 2;
+  $('#btn-start').textContent = !decksSel.length ? 'デッキを選んでください' : n < 2 ? '札が2枚以上必要です' : (nabe ? '闇鍋ではじめる' : 'はじめる');
+}
+$('#s-decks').addEventListener('change', e => {
+  const cb = e.target.closest('input[data-id]'); if (!cb) return;
+  if (cb.checked) picked.add(cb.dataset.id); else picked.delete(cb.dataset.id);
+  renderSetup();
+});
+$('#s-dup').addEventListener('change', renderSetup);
+
+function later(fn, ms) { const t = setTimeout(fn, ms); G.timers.push(t); return t; }
+function stopAll() {
+  if (!G) return;
+  G.timers.forEach(clearTimeout); G.timers = [];
+  if (G.typer) { clearInterval(G.typer); G.typer = null; }
+  stopSpeech();
+}
+function stopSpeech() { stopAudio(); try { window.speechSynthesis && speechSynthesis.cancel(); } catch (e) {} }
+function speakCard(c) {
+  if (!G || !G.voice) return;
+  if (c.audio) {
+    try { speechSynthesis.cancel(); } catch (e) {}
+    const a = playAudio(c.audio);
+    if (a) { a.onerror = () => speak(c.yomi || c.read); return; }
+  }
+  speak(c.yomi || c.read);
+}
+function speak(text) {
+  if (!G || !G.voice) return;
+  sayText(text, G.speed.rate);
+}
+function msg(t, cls = 'info', sub = '') {
+  const el = $('#msg'); el.innerHTML = esc(t) + (sub ? `<span class="src">${esc(sub)}</span>` : '');
+  el.className = 'msg ' + cls; void el.offsetWidth; if (t) el.classList.add('pop');
+}
+
+function updateScore() {
+  $('#you-pts').textContent = G.you - G.youPen; $('#cpu-pts').textContent = G.cpu - G.cpuPen;
+  $('#you-detail').textContent = `取った ${G.you}枚・お手つき ${G.youPen}`;
+  $('#cpu-detail').textContent = `取った ${G.cpu}枚・お手つき ${G.cpuPen}`;
+  $('#remain').textContent = G.field.length;
+}
+function fieldEl(iid) { return $(`#field .fuda[data-id="${iid}"]`); }
+const matches = () => G.field.filter(i => G.inst[i].key === G.curKey);
+
+function startGame() {
+  const P = buildPool();
+  if (P.pool.length < 2) { toast('札が2枚以上必要です'); return; }
+  stopAll();
+  const n = Math.min(+$('#s-count').value || 10, P.pool.length); lastCount = n;
+  const inst = {};
+  const sh = shuffle(P.pool.map((p, i) => { const iid = 'i' + i; inst[iid] = { iid, card: p.card, src: p.src, key: readKey(p.card) }; return iid; }));
+  const field = sh.slice(0, n);
+  const fieldKeys = new Set(field.map(i => inst[i].key));
+  // 空札：場にない読み札から選ぶ
+  const extra = $('#s-kara').checked ? sh.slice(n).filter(i => !fieldKeys.has(inst[i].key)).slice(0, Math.max(1, Math.ceil(n / 3))) : [];
+  G = {
+    inst, field: field.slice(), fieldTotal: field.length, queue: shuffle([...field, ...extra]), readCount: 0,
+    cur: null, curKey: null, phase: 'idle', you: 0, cpu: 0, youPen: 0, cpuPen: 0, youTaken: [], cpuTaken: [],
+    youLock: false, cpuMissed: false, timers: [], typer: null, nabe: P.decks.length >= 2,
+    level: LEVELS[$('#s-level').value], speed: SPEEDS[$('#s-speed').value], voice: $('#s-voice').checked,
+  };
+  const cw = n <= 8 ? 120 : n <= 16 ? 100 : n <= 30 ? 86 : 72;
+  const f = $('#field'); f.style.setProperty('--cw', cw + 'px');
+  f.classList.remove('locked');
+  f.innerHTML = shuffle(field.slice()).map(i => `<div class="fuda" data-id="${i}" style="--rot:${(Math.random() * 6 - 3).toFixed(1)}deg;transform:rotate(var(--rot))">${fudaHTML(inst[i].card)}</div>`).join('');
+  $('#lv-name').textContent = G.level.name + (G.nabe ? '　🍲 闇鍋' : '');
+  $('#setup').hidden = true; $('#game').hidden = false; $('#ov-result').hidden = true;
+  $('#read-no').textContent = ''; $('#read-text').textContent = '';
+  updateScore();
+  if (G.voice) { try { speechSynthesis.getVoices(); } catch (e) {} }
+  clearResTimers(); audio(); bgmStart(); $('#btn-mute').hidden = false;
+  msg(G.nabe ? '闇鍋かるた、札をよく見て…' : '札をよく見て…　はじまります', 'info');
+  later(nextRead, 2200);
+}
+
+function typewriter(text) {
+  const chars = [...text]; let i = 0; const box = $('#read-text');
+  box.innerHTML = '<span class="cursor"></span>';
+  G.typer = setInterval(() => {
+    i++;
+    box.innerHTML = esc(chars.slice(0, i).join('')) + (i < chars.length ? '<span class="cursor"></span>' : '');
+    if (i >= chars.length) { clearInterval(G.typer); G.typer = null; }
+  }, G.speed.ms);
+}
+
+function nextRead() {
+  if (!G) return;
+  if (!G.field.length || !G.queue.length) return endGame();
+  const iid = G.queue.shift();
+  const c = G.inst[iid].card;
+  G.cur = iid; G.curKey = G.inst[iid].key; G.phase = 'reading'; G.youLock = false; G.cpuMissed = false; G.readCount++;
+  $('#field').classList.remove('locked');
+  $('#read-no').textContent = `${G.readCount}枚目`;
+  const m = matches();
+  msg(m.length > 1 ? `同じ札が場に${m.length}枚！どれでもOK` : '', 'info');
+  typewriter(c.read); $('#read-yomi').textContent = c.yomi && c.yomi !== c.read ? c.yomi : ''; speakCard(c); bgmDuck(true);
+  const readDur = [...c.read].length * G.speed.ms;
+  if (m.length) {
+    scheduleCpu(Math.max(rand(G.level.min, G.level.max), G.speed.ms * 3));
+  } else {
+    // 空札
+    if (Math.random() < G.level.miss * 1.5) later(() => { if (G.phase === 'reading') cpuMiss(); }, rand(G.level.min, G.level.max));
+    later(() => {
+      if (G.phase !== 'reading') return;
+      G.phase = 'taken'; bgmDuck(false); SE.kara(); msg('空札でした（場にない札）', 'info', G.nabe ? `${srcLabel(G.inst[G.cur].src)}の札` : '');
+      later(nextRead, 1600);
+    }, readDur + 1800);
+  }
+}
+function scheduleCpu(d) {
+  later(() => {
+    if (!G || G.phase !== 'reading') return;
+    const m = matches(); if (!m.length) return;
+    if (!G.cpuMissed && G.field.length > m.length && Math.random() < G.level.miss) {
+      cpuMiss(); scheduleCpu(rand(900, 1900));
+    } else take(m[Math.floor(Math.random() * m.length)], 'cpu');
+  }, d);
+}
+function cpuMiss() {
+  G.cpuMissed = true;
+  const wrong = G.field.filter(i => G.inst[i].key !== G.curKey);
+  if (!wrong.length) return;
+  const el = fieldEl(wrong[Math.floor(Math.random() * wrong.length)]);
+  if (el) { el.classList.remove('cpu-miss'); void el.offsetWidth; el.classList.add('cpu-miss'); setTimeout(() => el.classList.remove('cpu-miss'), 900); }
+  G.cpuPen++; updateScore(); SE.boo(); msg('CPUがお手つき！', 'cpu');
+}
+const srcLabel = d => d.author ? `${d.author}さんの「${d.name}」` : `「${d.name}」`;
+function isVoicePlaying() {
+  try { if (window.speechSynthesis && (speechSynthesis.speaking || speechSynthesis.pending)) return true; } catch (e) {}
+  return !!(player && !player.paused && !player.ended);
+}
+// 読み終わる（文字も声も）まで待ってから次へ
+function waitReadEnd(cb) {
+  const t0 = Date.now();
+  const tick = () => {
+    if (!G) return;
+    if (G.skipWait || (!G.typer && !isVoicePlaying()) || Date.now() - t0 > 30000) { G.skipWait = false; G.waiting = false; cb(); }
+    else later(tick, 150);
+  };
+  G.waiting = true; later(tick, 300);
+}
+function take(iid, who) {
+  if (!G || G.phase !== 'reading') return;
+  G.phase = 'taken';
+  const mode = prefs.readOn || 'stop';
+  const keep = mode === 'all' || (mode === 'cpu' && who === 'cpu');
+  if (keep) { G.timers.forEach(clearTimeout); G.timers = []; }
+  else { stopAll(); bgmDuck(false); $('#read-text').textContent = G.inst[G.cur].card.read; }
+  SE.pan(who === 'you' ? 1 : .85);
+  const it = G.inst[iid], c = it.card;
+  const el = fieldEl(iid);
+  if (el) { el.classList.add(who === 'you' ? 'got-you' : 'got-cpu'); setTimeout(() => el.classList.add('gone'), 600); }
+  G.field = G.field.filter(x => x !== iid);
+  setBgmHeat(1 - G.field.length / Math.max(1, G.fieldTotal));
+  const sub = G.nabe ? `${srcLabel(it.src)}の札` : '';
+  if (who === 'you') { G.you++; G.youTaken.push(c); msg(`取った！「${c.head}」`, 'you', sub); }
+  else { G.cpu++; G.cpuTaken.push(c); msg(`CPUが取りました「${c.head}」`, 'cpu', sub); }
+  updateScore();
+  if (keep) waitReadEnd(() => { bgmDuck(false); $('#read-text').textContent = G.inst[G.cur].card.read; later(nextRead, G.nabe ? 1600 : 1100); });
+  else later(nextRead, G.nabe ? 2200 : 1800);
+}
+// 最後まで読んでいる途中で読み札の枠をタップすると、とばして次へ
+document.querySelector('.reader').addEventListener('click', () => {
+  if (!G || G.phase !== 'taken' || !G.waiting) return;
+  G.skipWait = true; stopSpeech();
+  if (G.typer) { clearInterval(G.typer); G.typer = null; }
+});
+$('#s-readon').value = prefs.readOn || 'stop';
+$('#s-readon').addEventListener('change', e => { prefs.readOn = e.target.value; savePrefs(); });
+$('#field').addEventListener('click', e => {
+  const el = e.target.closest('.fuda[data-id]');
+  if (!el || !G || G.phase !== 'reading' || el.classList.contains('gone')) return;
+  if (G.youLock) { msg('お手つきしたので、この札はもう取れません', 'miss'); return; }
+  const iid = el.dataset.id;
+  if (G.inst[iid].key === G.curKey) take(iid, 'you');
+  else {
+    G.youPen++; G.youLock = true; $('#field').classList.add('locked');
+    el.classList.remove('you-miss'); void el.offsetWidth; el.classList.add('you-miss');
+    setTimeout(() => el.classList.remove('you-miss'), 900);
+    SE.boo(); msg('お手つき！ −1点', 'miss'); updateScore();
+  }
+});
+$('#btn-repeat').addEventListener('click', () => { if (G && G.phase === 'reading' && G.cur) speakCard(G.inst[G.cur].card); });
+
+let resTimers = [], resData = null;
+function clearResTimers() { resTimers.forEach(clearTimeout); resTimers = []; }
+function resLater(fn, ms) { resTimers.push(setTimeout(fn, ms)); }
+function endGame() {
+  stopAll(); G.phase = 'done'; bgmStop(true);
+  $('#read-no').textContent = ''; $('#read-text').textContent = 'おしまい'; msg('');
+  resData = { you: G.youTaken.slice(), cpu: G.cpuTaken.slice(), yp: G.youPen, cp: G.cpuPen };
+  setTimeout(showResults, 700);
+}
+function resCard(side, c, sound) {
+  const el = document.createElement('div'); el.className = 'fuda'; el.innerHTML = fudaHTML(c);
+  $('#rcards-' + side).appendChild(el);
+  const n = $('#rcards-' + side).children.length; $('#rc-' + side).textContent = n;
+  if (sound) SE.pata(side === 'cpu');
+}
+function resPen(final) {
+  const d = resData;
+  $('#rp-you').textContent = d.yp ? `お手つき −${d.yp}` : 'お手つき なし';
+  $('#rp-cpu').textContent = d.cp ? `お手つき −${d.cp}` : 'お手つき なし';
+  $('#rp-you').classList.toggle('none', !d.yp); $('#rp-cpu').classList.toggle('none', !d.cp);
+  $('#rp-you').classList.add('on'); $('#rp-cpu').classList.add('on');
+}
+function resFinal(sound) {
+  const d = resData, y = d.you.length - d.yp, c = d.cpu.length - d.cp, win = y > c ? 1 : y < c ? -1 : 0;
+  $('#res-title').textContent = win === 1 ? 'あなたの勝ち！' : win === -1 ? 'CPUの勝ち…' : '引き分け！';
+  $('#res-title').style.color = win === 1 ? 'var(--red)' : win === -1 ? 'var(--indigo)' : 'var(--ink)';
+  $('#res-score').innerHTML = `<span class="y">あなた ${y}点</span>　−　<span class="c">CPU ${c}点</span>`;
+  $('#res-final').hidden = false;
+  $('#res-skip').hidden = true; $('#res-setup').hidden = false; $('#res-again').hidden = false;
+  if (sound) SE.fanfare(win);
+}
+function showResults() {
+  clearResTimers();
+  const d = resData;
+  ['you', 'cpu'].forEach(sd => { $('#rcards-' + sd).innerHTML = ''; $('#rc-' + sd).textContent = '0'; $('#rp-' + sd).textContent = ''; $('#rp-' + sd).classList.remove('on'); });
+  $('#res-final').hidden = true; $('#res-skip').hidden = false; $('#res-setup').hidden = true; $('#res-again').hidden = true;
+  $('#ov-result').hidden = false;
+  const n = Math.max(d.you.length, d.cpu.length);
+  const step = Math.max(80, Math.min(230, 2600 / Math.max(1, n)));
+  let t = 350;
+  for (let i = 0; i < n; i++) {
+    if (d.you[i]) { const c = d.you[i]; resLater(() => resCard('you', c, true), t); }
+    t += step / 2;
+    if (d.cpu[i]) { const c = d.cpu[i]; resLater(() => resCard('cpu', c, true), t); }
+    t += step / 2;
+  }
+  resLater(() => { resPen(); if (d.yp || d.cp) SE.boo(); }, t + 250);
+  resLater(() => SE.roll(1.2), t + 800);
+  resLater(() => resFinal(true), t + 2050);
+}
+$('#res-skip').addEventListener('click', () => {
+  clearResTimers(); const d = resData;
+  ['you', 'cpu'].forEach(sd => { const box = $('#rcards-' + sd); box.innerHTML = ''; d[sd].forEach(c => resCard(sd, c, false)); });
+  resPen(); resFinal(true);
+});
+function quitGame() {
+  stopAll(); G = null; clearResTimers(); bgmStop(); $('#btn-mute').hidden = true;
+  $('#game').hidden = true; $('#setup').hidden = false; $('#ov-result').hidden = true;
+  renderSetup();
+}
+$('#btn-start').addEventListener('click', startGame);
+$('#btn-quit').addEventListener('click', () => ask('ゲームをやめて設定にもどりますか？', quitGame));
+$('#res-again').addEventListener('click', startGame);
+$('#res-setup').addEventListener('click', quitGame);
+
+/* ================= 画面切り替え ================= */
+function route() {
+  const v = location.hash === '#play' ? 'play' : 'make';
+  if (v === 'make' && G) quitGame();
+  $('#make').hidden = v !== 'make'; $('#play').hidden = v !== 'play';
+  $('#tab-make').classList.toggle('on', v === 'make'); $('#tab-play').classList.toggle('on', v === 'play');
+  if (v === 'play' && !G) renderSetup();
+  if (v === 'make') { renderDeckBar(); renderDeck(); }
+}
+window.addEventListener('hashchange', route);
+updatePreview(); route();
+})();
+</script>
+</body>
+</html>
