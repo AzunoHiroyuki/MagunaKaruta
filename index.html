@@ -115,6 +115,45 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--indigo);outline-
 .reader .yomi{display:block;font-family:"Zen Maru Gothic",sans-serif;font-size:13px;letter-spacing:.08em;opacity:.75;margin-top:2px}
 #yomi-hint.warn{color:#b05a00}
 .sortbar select{width:auto;padding:6px 10px}
+.fuda-in.full{inset:5px;justify-content:flex-start}
+.fuda-in.full .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:3px;mix-blend-mode:multiply;pointer-events:none;-webkit-user-drag:none}
+.fuda-in.full .head{position:relative;z-index:1;margin:2px;background:rgba(255,255,255,.92);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.fuda-in.full .ftext{position:relative;z-index:1;margin-top:auto;background:rgba(255,250,240,.86);border-radius:4px;padding:1px 3px}
+.fuda-in.full .ftext:empty{display:none}
+#full-row select{width:auto;padding:6px 8px;font-size:13px}
+.dialog.frame-dlg{max-width:620px;padding:18px}
+.dialog.frame-dlg h3{font-size:20px;margin-bottom:4px}
+.frame-wrap{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;margin-top:10px;text-align:left}
+.frame-stage{position:relative;width:min(270px,62vw);aspect-ratio:3/4;border:2px solid #8b6b43;border-radius:10px;background:#fffaf0;
+  box-shadow:inset 0 0 0 4px #fffaf0,inset 0 0 0 5px #c9a978,0 4px 12px rgba(0,0,0,.18);overflow:hidden;touch-action:none;cursor:grab}
+.frame-stage:active{cursor:grabbing}
+.frame-stage canvas{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);border-radius:4px;mix-blend-mode:multiply}
+.fr-head{position:absolute;left:8px;top:8px;width:40%;aspect-ratio:1;border-radius:50%;border:2px solid var(--red);background:rgba(255,255,255,.92);color:var(--red);
+  display:grid;place-items:center;font-family:"Kaisei Decol",serif;font-size:min(56px,10vw);line-height:1;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.fr-side .lbl{font-size:12px;font-weight:700;color:var(--sub);margin:10px 0 4px}
+.fr-side .lbl:first-child{margin-top:0}
+.fr-zoom{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub)}
+.fr-zoom input{flex:1;accent-color:var(--red)}
+.anchor-grid{display:grid;grid-template-columns:repeat(3,38px);gap:4px}
+.anchor-grid button{height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font-size:15px}
+.anchor-grid button:hover{background:var(--paper2)}
+.fr-presets{display:flex;flex-direction:column;gap:6px}
+.fr-presets .btn{text-align:left}
+@media (max-width:560px){.frame-wrap{grid-template-columns:1fr}.frame-stage{margin:0 auto}}
+/* 丸囲み文字：基本設定で大きさ（--hs）と位置（html の hp-* クラス）を変える */
+.fuda .head{width:calc(var(--hs,42) * 1%);font-size:clamp(8px,calc(var(--w,100px) * var(--hs,42) / 100 * .6),90px);flex:none;order:0}
+.fuda .pic{order:1}.fuda .ftext{order:2}
+html.hp-r .fuda .head{align-self:flex-end}
+html.hp-c .fuda .head{align-self:center}
+html.hp-b .fuda .head{order:3}
+html.hp-b .fuda-in.full .head{margin-top:auto}
+.set-grid{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start}
+.set-prev{display:flex;gap:10px}
+.set-prev .fuda{--w:110px;width:110px}
+.pos-grid{grid-template-columns:repeat(3,44px)}
+.pos-grid button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+#btn-settings{background:var(--paper2)}
+@media (max-width:560px){.set-grid{grid-template-columns:1fr}.set-prev{justify-content:center}}
 /* ===== 札を作る ===== */
 .make-grid{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:18px;align-items:start}
 .preview-wrap{text-align:center}
@@ -197,7 +236,7 @@ details.tools summary{cursor:pointer;font-weight:700;color:var(--sub);padding:6p
 .res-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(50px,1fr));gap:6px;align-content:start;flex:1;perspective:600px}
 .res-cards .fuda{--w:50px;box-shadow:inset 0 0 0 3px var(--card),inset 0 0 0 4px #c9a978,0 2px 4px rgba(0,0,0,.2);animation:flipin .32s ease-out both}
 .res-cards .fuda .ftext{display:none}
-.res-cards .fuda .head{font-size:15px;width:46%}
+.res-cards .fuda{--w:50px}
 .res-pen.none{color:var(--sub)}
 .res-cards .fuda .fuda-in{inset:4px}
 @keyframes flipin{0%{transform:rotateY(90deg) translateY(-14px);opacity:0}100%{transform:none;opacity:1}}
@@ -233,10 +272,13 @@ details.tools summary{cursor:pointer;font-weight:700;color:var(--sub);padding:6p
 <body>
 <header>
   <h1><span class="mark">混</span>混具なカルタ<small class="sub">-Magna Carta-</small></h1>
+  <div class="row" style="gap:8px">
+  <button class="btn small" id="btn-settings" title="基本設定">⚙ 基本設定</button>
   <nav>
     <a href="#make" id="tab-make">札を作る</a>
     <a href="#play" id="tab-play">あそぶ</a>
   </nav>
+  </div>
 </header>
 
 <main>
@@ -280,6 +322,11 @@ details.tools summary{cursor:pointer;font-weight:700;color:var(--sub);padding:6p
           <button type="button" class="btn small indigo" id="btn-draw">絵を描く</button>
           <span class="btn small file-btn">画像から作る<input type="file" accept="image/*" id="f-file"></span>
           <button type="button" class="btn small ghost" id="btn-noimg" hidden>絵を外す</button>
+        </div>
+        <div class="img-row" id="full-row" hidden style="margin-top:8px">
+          <label class="check" style="margin:0"><input type="checkbox" id="f-full"> 絵をカードいっぱいに</label>
+          <button type="button" class="btn small indigo" id="btn-frame">✂ 位置・大きさを調整</button>
+          <label class="check" style="margin:0"><input type="checkbox" id="f-notext"> 取り札の文を出さない</label>
         </div>
         <label class="f">読み上げの声 <span style="font-weight:500">（あると対戦でその声で読みます）</span></label>
         <div class="img-row">
@@ -470,6 +517,52 @@ details.tools summary{cursor:pointer;font-weight:700;color:var(--sub);padding:6p
     <div class="acts"><button type="button" class="btn ghost" id="d-cancel">やめる</button><button type="button" class="btn primary" id="d-ok">この絵を使う</button></div>
   </div>
 </div>
+<div class="overlay" id="ov-set" hidden>
+  <div class="dialog" style="max-width:560px;text-align:left">
+    <h3 style="font-size:22px;text-align:center">基本設定</h3>
+    <div class="set-grid">
+      <div>
+        <label class="f">丸囲み文字の大きさ</label>
+        <div class="fr-zoom"><span>小</span><input type="range" id="set-hs" min="22" max="66" step="1" value="42"><span>大</span></div>
+        <label class="f">丸囲み文字の位置</label>
+        <div class="anchor-grid pos-grid" id="set-pos">
+          <button type="button" data-p="tl" title="左上">↖</button><button type="button" data-p="tc" title="上のまん中">↑</button><button type="button" data-p="tr" title="右上">↗</button>
+          <button type="button" data-p="bl" title="左下">↙</button><button type="button" data-p="bc" title="下のまん中">↓</button><button type="button" data-p="br" title="右下">↘</button>
+        </div>
+        <button type="button" class="btn small ghost" id="set-reset" style="margin-top:14px">はじめの設定にもどす</button>
+      </div>
+      <div class="set-prev"><div class="fuda" id="set-prev1"></div><div class="fuda" id="set-prev2"></div></div>
+    </div>
+    <p class="hint">札の一覧・対戦・集計・PDFのすべてに反映されます。</p>
+    <div class="acts"><button type="button" class="btn primary" id="set-close">閉じる</button></div>
+  </div>
+</div>
+<div class="overlay" id="ov-frame" hidden>
+  <div class="dialog frame-dlg">
+    <h3>絵の位置と大きさ</h3>
+    <p class="hint" style="margin:0">絵をドラッグして動かせます。大きさはつまみ・マウスホイール・2本指で変えられます。</p>
+    <div class="frame-wrap">
+      <div class="frame-stage" id="fr-stage"><canvas id="fr-cv" width="360" height="480"></canvas><span class="fr-head" id="fr-head">あ</span></div>
+      <div class="fr-side">
+        <div class="lbl">大きさ</div>
+        <div class="fr-zoom"><span>小</span><input type="range" id="fr-zoom" min="0" max="1000" value="500"><span>大</span></div>
+        <div class="lbl">カードのどこに寄せるか</div>
+        <div class="anchor-grid" id="fr-anchor">
+          <button type="button" data-a="0,0">↖</button><button type="button" data-a=".5,0">↑</button><button type="button" data-a="1,0">↗</button>
+          <button type="button" data-a="0,.5">←</button><button type="button" data-a=".5,.5">・</button><button type="button" data-a="1,.5">→</button>
+          <button type="button" data-a="0,1">↙</button><button type="button" data-a=".5,1">↓</button><button type="button" data-a="1,1">↘</button>
+        </div>
+        <div class="lbl">おまかせ</div>
+        <div class="fr-presets">
+          <button type="button" class="btn small" data-p="trim">余白をカットして大きく</button>
+          <button type="button" class="btn small" data-p="contain">絵が全部入る大きさ</button>
+          <button type="button" class="btn small" data-p="cover">すき間なくいっぱい</button>
+        </div>
+      </div>
+    </div>
+    <div class="acts"><button type="button" class="btn ghost" id="fr-cancel">やめる</button><button type="button" class="btn primary" id="fr-ok">この位置で決める</button></div>
+  </div>
+</div>
 <div class="overlay" id="ov-pdf" hidden>
   <div class="dialog" style="max-width:560px;text-align:left">
     <h3 style="font-size:22px;text-align:center">PDFにする（印刷用）</h3>
@@ -559,13 +652,17 @@ function autoHead(s) {
   const ch = [...String(s).trim()].find(x => !/[\s　「『（(【]/.test(x));
   return ch || '？';
 }
+const isImg = v => typeof v === 'string' && /^data:image\/(png|jpeg|webp|gif);base64,/.test(v);
 function normalize(c) {
   if (!c || typeof c.read !== 'string' || !c.read.trim()) return null;
   const read = c.read.trim();
   const yomi = String(c.yomi || '').trim();
   return { id: c.id || uid(), read, yomi, head: String(c.head || '').trim() || autoHead(yomi || read),
            emoji: String(c.emoji || '').trim(), text: String(c.text || '').trim(),
-           img: typeof c.img === 'string' && /^data:image\/(png|jpeg|webp|gif);base64,/.test(c.img) ? c.img : '',
+           img: isImg(c.img) ? c.img : '',
+           imgOrig: c.full && isImg(c.imgOrig) ? c.imgOrig : '',
+           full: !!c.full && isImg(c.img), notext: !!c.notext,
+           frame: c.frame && [c.frame.z, c.frame.cx, c.frame.cy].every(v => Number.isFinite(+v)) ? { z: +c.frame.z, cx: +c.frame.cx, cy: +c.frame.cy } : null,
            audio: typeof c.audio === 'string' && /^data:audio\/[\w.+-]+(;[\w=.+-]+)*;base64,/.test(c.audio) ? c.audio : '' };
 }
 const STORE2 = 'tezukuri-karuta-v2';
@@ -720,7 +817,20 @@ $('#btn-folder').addEventListener('click', async () => {
 })();
 const readKey = c => c.read.replace(/[\s　、。,.!！?？・「」『』]/g, '');
 
+/* ---- 基本設定（丸囲み文字の大きさ・位置）---- */
+const LOOK_KEY = 'magna-carta-look';
+const look = (() => { try { return Object.assign({ hs: 42, pos: 'tl' }, JSON.parse(localStorage.getItem(LOOK_KEY) || '{}')); } catch (e) { return { hs: 42, pos: 'tl' }; } })();
+function applyLook() {
+  const h = document.documentElement;
+  h.style.setProperty('--hs', look.hs);
+  h.classList.remove('hp-l', 'hp-c', 'hp-r', 'hp-t', 'hp-b');
+  h.classList.add(look.pos[0] === 'b' ? 'hp-b' : 'hp-t', look.pos[1] === 'r' ? 'hp-r' : look.pos[1] === 'c' ? 'hp-c' : 'hp-l');
+}
+applyLook();
 function fudaHTML(c) {
+  const txt = c.notext ? '' : esc(c.text || c.read);
+  if (c.img && c.full) return `<div class="fuda-in full"><img class="bg" src="${esc(c.img)}" alt=""><span class="head">${esc(c.head)}</span></div>`;
+  if (c.notext) return `<div class="fuda-in"><span class="head">${esc(c.head)}</span><span class="pic">${c.img ? `<img src="${esc(c.img)}" alt="">` : esc(c.emoji || '')}</span></div>`;
   return `<div class="fuda-in"><span class="head">${esc(c.head)}</span><span class="pic">${c.img ? `<img src="${esc(c.img)}" alt="">` : esc(c.emoji || '')}</span><span class="ftext">${esc(c.text || c.read)}</span></div>`;
 }
 
@@ -732,11 +842,103 @@ function ask(text, onYes) {
   $('#confirm-no').onclick = () => { $('#ov-confirm').hidden = true; };
 }
 
+/* ---- 絵をカードいっぱいに：位置と大きさ（フレーム）で 3:4 に切り出す ---- */
+const FW = 540, FH = 720;   // 仕上がりの大きさ（3:4）
+function loadImage(src) { return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = src; }); }
+const anaCache = new Map();
+const srcKey = src => src.length + ':' + src.slice(-64);
+async function analyze(src) {
+  const key = srcKey(src);
+  if (anaCache.has(key)) return anaCache.get(key);
+  const im = await loadImage(src);
+  const W = im.naturalWidth || im.width, H = im.naturalHeight || im.height;
+  // 調べるのは縮小版で（速さのため）
+  const sc = Math.min(1, 320 / Math.max(W, H)), w = Math.max(1, Math.round(W * sc)), h = Math.max(1, Math.round(H * sc));
+  const c0 = document.createElement('canvas'); c0.width = w; c0.height = h;
+  const x0 = c0.getContext('2d', { willReadFrequently: true }); x0.drawImage(im, 0, 0, w, h);
+  const d = x0.getImageData(0, 0, w, h).data;
+  let r = 0, g = 0, b = 0, n = 0;
+  const add = (x, y) => { const i = (y * w + x) * 4; r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; };
+  for (let x = 0; x < w; x++) { add(x, 0); add(x, h - 1); }
+  for (let y = 0; y < h; y++) { add(0, y); add(w - 1, y); }
+  const bg = [r / n, g / n, b / n].map(Math.round);
+  let minX = w, minY = h, maxX = -1, maxY = -1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = (y * w + x) * 4;
+    if (Math.abs(d[i] - bg[0]) + Math.abs(d[i + 1] - bg[1]) + Math.abs(d[i + 2] - bg[2]) > 60) {
+      if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y;
+    }
+  }
+  if (maxX < 0) { minX = 0; minY = 0; maxX = w - 1; maxY = h - 1; }
+  const box = { minX: minX / sc, minY: minY / sc, maxX: (maxX + 1) / sc, maxY: (maxY + 1) / sc };
+  const res = { im, W, H, bg, box };
+  anaCache.set(key, res);
+  return res;
+}
+const coverScale = a => Math.max(FW / a.W, FH / a.H);
+// z：すき間なくいっぱい＝1。cx,cy：絵の中心がカードのどこにあるか（0〜1）
+function presetFrame(a, kind) {
+  const base = coverScale(a);
+  if (kind === 'cover') return { z: 1, cx: .5, cy: .5 };
+  if (kind === 'contain') return { z: Math.min(FW / a.W, FH / a.H) / base, cx: .5, cy: .5 };
+  const b = a.box, bw = b.maxX - b.minX, bh = b.maxY - b.minY, pad = Math.max(bw, bh) * .04;
+  const s = Math.min(FW / (bw + 2 * pad), FH / (bh + 2 * pad));
+  const bcx = b.minX + bw / 2, bcy = b.minY + bh / 2;
+  return { z: s / base, cx: (FW / 2 - (bcx - a.W / 2) * s) / FW, cy: (FH / 2 - (bcy - a.H / 2) * s) / FH };
+}
+function drawFramed(ctx, a, f, w, h) {
+  const s = coverScale(a) * f.z * (w / FW), dw = a.W * s, dh = a.H * s;
+  ctx.fillStyle = `rgb(${a.bg.join(',')})`; ctx.fillRect(0, 0, w, h);
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(a.im, f.cx * w - dw / 2, f.cy * h - dh / 2, dw, dh);
+}
+const framedCache = new Map();
+const frameKey = (src, f) => srcKey(src) + '|' + (f ? [f.z, f.cx, f.cy].map(v => (+v).toFixed(4)).join(',') : 'auto');
+async function renderFramed(src, f) {
+  const key = frameKey(src, f);
+  if (framedCache.has(key)) return framedCache.get(key);
+  const a = await analyze(src);
+  const fr = f || presetFrame(a, 'trim');
+  const c = document.createElement('canvas'); c.width = FW; c.height = FH;
+  drawFramed(c.getContext('2d'), a, fr, FW, FH);
+  const url = c.toDataURL('image/jpeg', .88);
+  framedCache.set(key, url);
+  return url;
+}
+// 画像ファイルは、なるべく元の画質のまま（長い辺 1200 まで）取り込む
+async function fileToImageURL(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const im = await loadImage(url);
+    const W = im.naturalWidth, H = im.naturalHeight, k = Math.min(1, 1200 / Math.max(W, H));
+    const c = document.createElement('canvas'); c.width = Math.round(W * k); c.height = Math.round(H * k);
+    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+    x.imageSmoothingQuality = 'high'; x.drawImage(im, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', .9);
+  } finally { URL.revokeObjectURL(url); }
+}
+
+function renderSettings() {
+  $('#set-hs').value = look.hs;
+  document.querySelectorAll('#set-pos button').forEach(b => b.classList.toggle('on', b.dataset.p === look.pos));
+  const sample = { head: 'あ', emoji: '🌸', read: 'あさおきて　まどをあければ　あおいそら' };
+  const full = (typeof deck !== 'undefined' && deck.find(c => c.full && c.img)) || (typeof ALL !== 'undefined' && ALL.decks.flatMap(d => d.cards).find(c => c.full && c.img));
+  $('#set-prev1').innerHTML = fudaHTML(sample);
+  $('#set-prev2').innerHTML = full ? fudaHTML(full) : fudaHTML({ head: 'か', emoji: '☔', read: 'かさをさし　かえるといっしょに　あめのみち' });
+}
+function saveLook() { try { localStorage.setItem(LOOK_KEY, JSON.stringify(look)); } catch (e) {} applyLook(); renderSettings(); }
+$('#btn-settings').addEventListener('click', () => { renderSettings(); $('#ov-set').hidden = false; });
+$('#set-close').addEventListener('click', () => { $('#ov-set').hidden = true; if (typeof updatePdfPreview === 'function' && !$('#ov-pdf').hidden) updatePdfPreview(); });
+$('#set-hs').addEventListener('input', e => { look.hs = +e.target.value; saveLook(); });
+$('#set-pos').addEventListener('click', e => { const b = e.target.closest('button[data-p]'); if (b) { look.pos = b.dataset.p; saveLook(); } });
+$('#set-reset').addEventListener('click', () => { look.hs = 42; look.pos = 'tl'; saveLook(); });
+
 /* ================= 札を作るモード ================= */
 let editingId = null;
-let currentImg = '', currentAudio = '';
+let currentImg = '', currentAudio = '';  // currentImg は元の絵（いっぱい表示用の加工前）
+let currentFrame = null;                 // いっぱい表示の位置と大きさ（null＝おまかせ）
 const form = $('#card-form');
-const readForm = () => ({ read: $('#f-read').value.trim(), yomi: $('#f-yomi').value.trim(), head: $('#f-head').value.trim(), emoji: $('#f-emoji').value.trim(), text: $('#f-text').value.trim(), img: currentImg, audio: currentAudio });
+const readForm = () => ({ read: $('#f-read').value.trim(), yomi: $('#f-yomi').value.trim(), head: $('#f-head').value.trim(), emoji: $('#f-emoji').value.trim(), text: $('#f-text').value.trim(), img: currentImg, audio: currentAudio, full: $('#f-full').checked && !!currentImg, frame: currentFrame, notext: $('#f-notext').checked });
 
 function updatePreview() {
   const f = readForm();
@@ -745,23 +947,35 @@ function updatePreview() {
   if (f.yomi) yh.textContent = `声ではこう読みます：「${f.yomi}」`;
   else if (/[\u3400-\u9fff々〆a-zA-Zａ-ｚＡ-Ｚ0-9０-９]/.test(f.read)) { yh.textContent = '漢字・英数字が入っています。「声で確認」で聞いて、読み間違えるときは読み方を入れてください。'; yh.classList.add('warn'); }
   else yh.textContent = '';
-  $('#preview').innerHTML = fudaHTML({ read: f.read || '読み札の文', head: f.head || (f.read ? autoHead(f.yomi || f.read) : 'よ'), emoji: f.emoji || (f.read || f.img ? '' : '🎴'), text: f.text, img: f.img });
+  let pimg = f.img;
+  if (f.full && f.img) { const k = frameKey(f.img, f.frame); pimg = framedCache.get(k) || f.img; if (!framedCache.has(k)) renderFramed(f.img, f.frame).then(() => updatePreview()).catch(() => {}); }
+  $('#preview').innerHTML = fudaHTML({ read: f.read || '読み札の文', head: f.head || (f.read ? autoHead(f.yomi || f.read) : 'よ'), emoji: f.emoji || (f.read || f.img ? '' : '🎴'), text: f.text, img: pimg, full: f.full, notext: f.notext });
   $('#btn-draw').textContent = currentImg ? '絵を描き直す' : '絵を描く';
   $('#btn-noimg').hidden = !currentImg;
+  $('#full-row').hidden = !currentImg;
+  $('#btn-frame').hidden = !$('#f-full').checked;
+  $('#f-notext').closest('label').hidden = $('#f-full').checked;
+  $('#f-text').disabled = $('#f-full').checked && !!currentImg;
+  $('#f-text').placeholder = $('#f-text').disabled ? 'カードいっぱい表示では文は出ません（絵と頭文字だけ）' : '省略できます';
   $('#btn-play').hidden = $('#btn-noaudio').hidden = !currentAudio;
   if (!rec) $('#rec-info').textContent = currentAudio ? `声あり（${Math.max(1, Math.round(currentAudio.length * .75 / 1024))}KB）` : '';
 }
 ['#f-read', '#f-yomi', '#f-head', '#f-emoji', '#f-text'].forEach(s => $(s).addEventListener('input', updatePreview));
+['#f-full', '#f-notext'].forEach(s => $(s).addEventListener('change', updatePreview));
 
 function resetForm() {
-  form.reset(); editingId = null; currentImg = ''; currentAudio = ''; if (rec) { recCancel = true; rec.stop(); } stopAudio();
+  form.reset(); editingId = null; currentImg = ''; currentAudio = ''; currentFrame = null; if (rec) { recCancel = true; rec.stop(); } stopAudio();
   $('#form-title').textContent = '新しい札を作る'; $('#f-submit').textContent = '札を追加'; $('#f-cancel').hidden = true;
   updatePreview(); renderDeck();
 }
-form.addEventListener('submit', e => {
+form.addEventListener('submit', async e => {
   e.preventDefault();
   const f = readForm();
   if (!f.read) { toast('読み札の文を入れてください'); $('#f-read').focus(); return; }
+  if (f.full && f.img) {
+    try { f.imgOrig = f.img; f.img = await renderFramed(f.img, f.frame); }
+    catch (err) { toast('絵の加工に失敗しました。ふつうの表示で保存します'); f.full = false; f.imgOrig = ''; }
+  }
   if (editingId) {
     const i = deck.findIndex(c => c.id === editingId);
     if (i >= 0) deck[i] = normalize({ ...f, id: editingId });
@@ -796,7 +1010,7 @@ $('#deck').addEventListener('click', e => {
   } else {
     editingId = id;
     $('#f-read').value = c.read; $('#f-yomi').value = c.yomi || ''; $('#f-head').value = c.head === autoHead(c.yomi || c.read) ? '' : c.head;
-    $('#f-emoji').value = c.emoji; $('#f-text').value = c.text; currentImg = c.img || ''; currentAudio = c.audio || '';
+    $('#f-emoji').value = c.emoji; $('#f-text').value = c.text; currentImg = c.imgOrig || c.img || ''; currentAudio = c.audio || ''; $('#f-full').checked = !!c.full; currentFrame = c.frame || null; $('#f-notext').checked = !!c.notext;
     $('#form-title').textContent = '札を直す'; $('#f-submit').textContent = '直した内容で保存'; $('#f-cancel').hidden = false;
     updatePreview(); renderDeck();
     window.scrollTo({ top: 0, behavior: 'smooth' }); $('#f-read').focus();
@@ -883,7 +1097,7 @@ $('#btn-deck-del').addEventListener('click', () => {
 /* ---- 共有：書き出し・読み込み ---- */
 function deckPayload(d) {
   return { format: 'tezukuri-karuta', version: 2, name: d.name, author: d.author,
-    cards: d.cards.map(({ read, yomi, head, emoji, text, img, audio }) => { const o = { read, head, emoji, text }; if (yomi) o.yomi = yomi; if (img) o.img = img; if (audio) o.audio = audio; return o; }) };
+    cards: d.cards.map(({ read, yomi, head, emoji, text, img, imgOrig, full, frame, notext, audio }) => { const o = { read, head, emoji, text }; if (yomi) o.yomi = yomi; if (img) o.img = img; if (full) { o.full = true; if (frame) o.frame = frame; if (imgOrig) o.imgOrig = imgOrig; } if (notext) o.notext = true; if (audio) o.audio = audio; return o; }) };
 }
 $('#btn-export').addEventListener('click', () => {
   save(false); $('#io').value = JSON.stringify(deckPayload(cur()));
@@ -1064,12 +1278,29 @@ function cardFrame(ctx, k, x, y, w, h, cut) {
 }
 function drawTori(ctx, k, c, x, y, w, h, imgs, cut) {
   cardFrame(ctx, k, x, y, w, h, cut);
-  const R = w * .19, cx = x + 4 + R, cy = y + 4 + R;
+  const R = (w - 8) * look.hs / 200, hb = look.pos[0] === 'b';
+  const cx = look.pos[1] === 'r' ? x + w - 4 - R : look.pos[1] === 'c' ? x + w / 2 : x + 4 + R;
+  const cy = hb ? y + h - 4 - R : y + 4 + R;
+  const fim = c.full && c.img && imgs.get(c.img);
+  if (fim) {
+    const ix = x + 1.6, iy = y + 1.6, iw = w - 3.2, ih = h - 3.2;
+    ctx.save(); rr(ctx, ix * k, iy * k, iw * k, ih * k, 1.2 * k); ctx.clip();
+    ctx.globalCompositeOperation = 'multiply';
+    const sc = Math.max(iw / fim.width, ih / fim.height), dw = fim.width * sc, dh = fim.height * sc;
+    ctx.drawImage(fim, (ix + (iw - dw) / 2) * k, (iy + (ih - dh) / 2) * k, dw * k, dh * k);
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(cx * k, cy * k, R * k, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.lineWidth = .6 * k; ctx.strokeStyle = '#b8322a'; ctx.stroke();
+    ctx.fillStyle = '#b8322a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = `700 ${R * 1.25 * k}px ${SERIF}`; ctx.fillText(c.head, cx * k, (cy + R * .05) * k);
+    return;
+  }
   ctx.beginPath(); ctx.arc(cx * k, cy * k, R * k, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill();
   ctx.lineWidth = .6 * k; ctx.strokeStyle = '#b8322a'; ctx.stroke();
   ctx.fillStyle = '#b8322a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.font = `700 ${R * 1.25 * k}px ${SERIF}`; ctx.fillText(c.head, cx * k, (cy + R * .05) * k);
-  const textH = 13, top = y + 4 + 2 * R + 2, bottom = y + h - 3 - textH, boxW = w - 10, boxH = bottom - top;
+  const textH = c.notext ? 0 : 13, foot = hb ? 2 * R + 3 : 0;
+  const top = hb ? y + 4 : y + 4 + 2 * R + 2, bottom = y + h - 3 - textH - foot, boxW = w - 10, boxH = bottom - top;
   const im = c.img && imgs.get(c.img);
   if (im) {
     const sc = Math.min(boxW / im.width, boxH / im.height), iw = im.width * sc, ih = im.height * sc;
@@ -1079,9 +1310,10 @@ function drawTori(ctx, k, c, x, y, w, h, imgs, cut) {
     const fs = Math.min(boxH, boxW) * .72; ctx.font = `${fs * k}px ${EMOJI_FONT}`; ctx.fillStyle = '#000';
     ctx.fillText(c.emoji, (x + w / 2) * k, (top + boxH / 2) * k);
   }
+  if (c.notext) return;
   ctx.font = `500 ${3.1 * k}px ${ROUND}`; ctx.fillStyle = '#6d5c4a';
   const lines = wrapLines(ctx, c.text || c.read, (w - 8) * k, 3);
-  const ly = y + h - 3.5 - textH + (textH - lines.length * 4.2) / 2 + 2.1;
+  const ly = y + h - 3.5 - foot - textH + (textH - lines.length * 4.2) / 2 + 2.1;
   lines.forEach((l, i) => ctx.fillText(l, (x + w / 2) * k, (ly + i * 4.2) * k));
 }
 const ROT = new Set([...'ー－―‐〜～…‥-─—「」『』（）()【】［］〔〕＜＞<>＝=']);
@@ -1285,7 +1517,7 @@ async function importPdf(buf, fallbackName) {
 
 /* ================= 絵を描く ================= */
 const cv = $('#cv'), cx = cv.getContext('2d');
-const CV = 480, OUT = 260;
+const CV = 480, OUT = 480;
 const COLORS = ['#2b2118','#ffffff','#b8322a','#e67e22','#f1c40f','#3e7a4a','#7ec850','#3498db','#2c3e6b','#8e44ad','#f39ac0','#8b5a2b','#95a5a6'];
 const pen = { color: '#2b2118', size: 10, erase: false };
 let hist = [], drawing = false, last = null;
@@ -1356,15 +1588,91 @@ $('#d-fill').addEventListener('click', () => {
   cx.putImageData(img, 0, 0);
 });
 $('#d-file').addEventListener('change', e => { loadFile(e.target.files[0]); e.target.value = ''; });
-$('#f-file').addEventListener('change', e => { loadFile(e.target.files[0]); e.target.value = ''; });
+$('#f-file').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  if (!/^image\//.test(f.type)) { toast('画像ファイルを選んでください'); return; }
+  try { setNewImage(await fileToImageURL(f), true); }
+  catch (err) { toast('この画像は読み込めませんでした'); }
+});
+function setNewImage(url, openFrame) {
+  const first = !currentImg;
+  currentImg = url; currentFrame = null;
+  if (first) $('#f-full').checked = true;   // はじめて絵を付けたときは「カードいっぱい」に
+  updatePreview();
+  if (openFrame && $('#f-full').checked) openFramer();
+}
 $('#btn-draw').addEventListener('click', () => openDraw(currentImg));
-$('#btn-noimg').addEventListener('click', () => { currentImg = ''; updatePreview(); });
+$('#btn-noimg').addEventListener('click', () => { currentImg = ''; currentFrame = null; updatePreview(); });
+
+/* ---- 位置・大きさの調整画面 ---- */
+let FR = null; // { a, f }
+const zToSlider = z => Math.round(Math.log(z / .2) / Math.log(25) * 1000);
+const sliderToZ = v => .2 * Math.pow(25, v / 1000);
+function frDraw() {
+  const c = $('#fr-cv'); drawFramed(c.getContext('2d'), FR.a, FR.f, c.width, c.height);
+  $('#fr-zoom').value = zToSlider(FR.f.z);
+}
+function frZoom(r, px = .5, py = .5) { // (px,py) を中心に r 倍
+  const f = FR.f, nz = Math.max(.2, Math.min(5, f.z * r)); r = nz / f.z;
+  f.cx = px + (f.cx - px) * r; f.cy = py + (f.cy - py) * r; f.z = nz; frDraw();
+}
+async function openFramer() {
+  if (!currentImg) return;
+  try {
+    const a = await analyze(currentImg);
+    FR = { a, f: { ...(currentFrame || presetFrame(a, 'trim')) } };
+    const fv = readForm(); $('#fr-head').textContent = fv.head || (fv.read ? autoHead(fv.yomi || fv.read) : 'あ');
+    const hd = $('#fr-head').style, wpc = look.hs * .95;
+    hd.width = wpc + '%'; hd.fontSize = `calc(min(270px, 62vw) * ${look.hs / 100 * .58})`;
+    hd.left = hd.right = hd.top = hd.bottom = 'auto';
+    if (look.pos[0] === 'b') hd.bottom = '8px'; else hd.top = '8px';
+    if (look.pos[1] === 'r') hd.right = '8px'; else if (look.pos[1] === 'c') hd.left = `calc(50% - ${wpc / 2}%)`; else hd.left = '8px';
+    $('#ov-frame').hidden = false; frDraw();
+  } catch (e) { toast('絵を読み込めませんでした'); }
+}
+$('#btn-frame').addEventListener('click', openFramer);
+$('#f-full').addEventListener('change', () => { if ($('#f-full').checked && currentImg && !currentFrame) openFramer(); });
+$('#fr-zoom').addEventListener('input', e => { if (FR) frZoom(sliderToZ(+e.target.value) / FR.f.z); });
+$('#fr-anchor').addEventListener('click', e => {
+  const b = e.target.closest('button[data-a]'); if (!b || !FR) return;
+  const [ax, ay] = b.dataset.a.split(',').map(Number), f = FR.f, s = coverScale(FR.a) * f.z;
+  const dw = FR.a.W * s / FW, dh = FR.a.H * s / FH;
+  f.cx = ax === 0 ? dw / 2 : ax === 1 ? 1 - dw / 2 : .5;
+  f.cy = ay === 0 ? dh / 2 : ay === 1 ? 1 - dh / 2 : .5;
+  frDraw();
+});
+document.querySelectorAll('.fr-presets [data-p]').forEach(b => b.addEventListener('click', () => { if (FR) { FR.f = presetFrame(FR.a, b.dataset.p); frDraw(); } }));
+(() => {
+  const st = $('#fr-stage'), pts = new Map(); let pinch0 = 0;
+  const rel = e => { const r = $('#fr-cv').getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height }; };
+  st.addEventListener('pointerdown', e => { if (!FR) return; e.preventDefault(); try { st.setPointerCapture(e.pointerId); } catch (_) {} pts.set(e.pointerId, rel(e)); if (pts.size === 2) { const [p, q] = [...pts.values()]; pinch0 = Math.hypot(p.x - q.x, p.y - q.y); } });
+  st.addEventListener('pointermove', e => {
+    if (!FR || !pts.has(e.pointerId)) return;
+    const prev = pts.get(e.pointerId), now = rel(e); pts.set(e.pointerId, now);
+    if (pts.size === 1) { FR.f.cx += now.x - prev.x; FR.f.cy += now.y - prev.y; frDraw(); }
+    else if (pts.size === 2) {
+      const [p, q] = [...pts.values()], d = Math.hypot(p.x - q.x, p.y - q.y);
+      if (pinch0 > 0 && d > 0) frZoom(d / pinch0, (p.x + q.x) / 2, (p.y + q.y) / 2);
+      pinch0 = d;
+    }
+  });
+  const up = e => { pts.delete(e.pointerId); pinch0 = 0; };
+  st.addEventListener('pointerup', up); st.addEventListener('pointercancel', up);
+  st.addEventListener('wheel', e => { if (!FR) return; e.preventDefault(); const p = rel(e); frZoom(Math.exp(-e.deltaY * .0015), p.x, p.y); }, { passive: false });
+})();
+$('#fr-cancel').addEventListener('click', () => { $('#ov-frame').hidden = true; FR = null; });
+$('#fr-ok').addEventListener('click', () => {
+  if (!FR) return;
+  currentFrame = { ...FR.f }; $('#f-full').checked = true;
+  $('#ov-frame').hidden = true; FR = null; updatePreview();
+  toast('位置を決めました。「札を追加」で保存されます');
+});
 $('#d-cancel').addEventListener('click', () => { $('#ov-draw').hidden = true; });
 $('#d-ok').addEventListener('click', () => {
   const o = document.createElement('canvas'); o.width = o.height = OUT;
   const ox = o.getContext('2d'); ox.imageSmoothingQuality = 'high'; ox.drawImage(cv, 0, 0, OUT, OUT);
-  currentImg = o.toDataURL('image/jpeg', 0.85);
-  $('#ov-draw').hidden = true; updatePreview();
+  $('#ov-draw').hidden = true;
+  setNewImage(o.toDataURL('image/jpeg', 0.9), false);
   toast('絵をセットしました。「札を追加」で保存されます');
 });
 
